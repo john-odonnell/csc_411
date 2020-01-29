@@ -5,6 +5,7 @@
 #include "assert.h"
 #include "pnmrdr.h"
 
+// average brightness function
 float brightness(Pnmrdr_T pnm, int pxl_count, int denom) {
 	float avg;
 	unsigned sum = 0;
@@ -44,16 +45,17 @@ int main(int argc, char* argv[]) {
 	unsigned denom = data.denominator;
 
 	// print results
-	printf("File opened\n");
-	printf("argv[1]: %s\n", argv[1]);
+	// used in testing stage
+	// printf("File opened\n");
+	// printf("argv[1]: %s\n", argv[1]);
 
-	printf("width: %d\n", width);
-	printf("height: %d\n", height);
-	printf("denom: %d\n", denom);
+	// printf("width: %d\n", width);
+	// printf("height: %d\n", height);
+	// printf("denom: %d\n", denom);
 	
 	// calculate average brightness
 	float avg = brightness(pnm, (width * height), denom);
-	printf("average brightness: %4.3f\n", avg);
+	printf("%4.3f\n", avg);
 
 	// close the file stream and pnmreader
 	fclose(image);
