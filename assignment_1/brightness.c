@@ -5,12 +5,15 @@
 #include "assert.h"
 #include "pnmrdr.h"
 
-// float brightness(Pnmrdr_T pnm, int pxl_count, int denom) {
-//	float avg;
-//	for(int i = 0; i < pxl_count; i++) {
-//		
-//	}
-// }
+float brightness(Pnmrdr_T pnm, int pxl_count, int denom) {
+	float avg;
+	unsigned sum = 0;
+	for(int i = 0; i < pxl_count; i++) {
+		sum = sum + Pnmrdr_get(pnm);	
+	}
+	avg = (float) (sum / denom) / pxl_count;
+	return avg;
+}
 
 int main(int argc, char* argv[]) {
 	assert(argc<=2);
@@ -48,6 +51,10 @@ int main(int argc, char* argv[]) {
 	printf("height: %d\n", height);
 	printf("denom: %d\n", denom);
 	
+	// calculate average brightness
+	float avg = brightness(pnm, (width * height), denom);
+	printf("average brightness: %4.3f\n", avg);
+
 	// close the file stream and pnmreader
 	fclose(image);
 	Pnmrdr_free(&pnm);
