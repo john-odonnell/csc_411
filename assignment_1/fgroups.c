@@ -6,6 +6,9 @@
 #include "list.h"
 #include "atom.h"
 
+// strcomp instead of ==
+// == is used to comfirm pointer equality
+
 // takes input and stores in table, returns filled table
 int main(int argc, char* argv[]) {
 	(void)argc;
@@ -30,9 +33,9 @@ int main(int argc, char* argv[]) {
 		// printf("%s\n%s\n", fprint, name);
 		
 		const char *new_fprint = Atom_string(fprint);
-		const char *new_name = Atom_string(name);
+		// const char *new_name = Atom_string(name);
 		
-		List_T list = List_list((char*)new_name);
+		List_T list = List_list(name);
 		Table_put(table, new_fprint, list);
 	}
 	
@@ -52,7 +55,7 @@ int main(int argc, char* argv[]) {
 
 	printf("%s\tlen=%d\n", foo, List_length(Table_get(table, foo)));
 	printf("%s\tlen=%d\n", fee, List_length(Table_get(table, fee)));
-		
+	printf("table len=%d\n", Table_length(table));
 	Table_free(&table);
 	
 	return 0;
