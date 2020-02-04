@@ -22,7 +22,11 @@ int main(int argc, char* argv[]) {
 	// open file
 	FILE *image;
 	// if the filename is given as a command line argument
-	if (argc>1) {
+	if (argc > 2) {
+		fprintf(stderr, "More than one argument given.\n");
+		exit(1);
+	}
+	else if (argc > 1 && argc < 3) {
 		image = fopen(argv[1],"r");
 	}
 	// if the file is given through std input
