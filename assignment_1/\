@@ -1,0 +1,116 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+
+#include "assert.h"
+#include "table.h"
+#include "atom.h"
+#include "list.h"
+#include "array.h"
+#include "mem.h"
+
+void apply_print(void **x, void *cl){
+	(void)cl;
+	char **value = (char **)x;
+	printf("value: %s\n", *value);
+	return;
+}
+
+void free_table(const void *key, void **value, void *cl){
+	(void)cl; (void)key;
+	List_free(*value);
+	return;
+}
+
+Table_T input_table(FILE *stream){
+	// initialize table
+	Table_T table = Table_new(100, NULL, NULL);
+	
+	// initialize input, fprint and name char arrays
+	// int input_max_len = 1000;
+	// int max_fprint_len = 512;
+	// int max_name_len = 1000 - 512;
+	
+	// for each input line, seperate the input into fprint and name
+	while(1){
+		if(feof(stream)){
+			break;
+		}
+		
+		int max_in_length = 1000;
+		int max_fprint_length = 512;
+		int max_name_length = max_in_length - max_fprint_length - 1;
+		char *input[max_in_length];
+		NEW(input);
+		input = gets(input);
+		
+		char fprint[max_fprint_length];
+		char name[max_name_length];
+
+		char *fprint = strtok(input, " ");
+
+
+
+		char *input_pnt;
+		input_pnt = &input;
+		char *fprint;
+		char *name = input;	
+		input_pnt = fgets(input, input_max_len, stream);
+		fprint = __strtok_r(input, " ", &name);
+
+		const char *new_fprint;
+		new_fprint = Atom_string(fprint);
+
+		List_T list;
+		NEW(list);
+		list = List_list(name);
+
+		Table_put(table, new_fprint, &list);
+	}
+
+	return table;
+}
+
+int main(int argc, char* argv[]){
+	// void unnecessary argument variables
+	(void)argc; (void)argv;
+	// initialise standard input as file stream
+	FILE *stream = stdin;
+
+	// initialise table
+	Table_T table = input_table(stream);
+	// Table_T table = Table_new(100, NULL, NULL);
+	
+	// initialise a fprint and name combo
+	char fprint[] = "Hello";
+	char name[] = "John";
+	// store fprint as an atom
+	const char *new_fprint;
+	NEW(new_fprint);
+	new_fprint = Atom_string(fprint);
+	// create a list and new pointer to the list with the name in it
+	List_T list;
+	List_T *list_pnt;
+	NEW(list);
+	NEW(list_pnt);
+	list = List_list(name);
+	list_pnt = &list;
+
+	// put the new key value pair in the list
+	Table_put(table, new_fprint, &list);
+	
+	// check table length
+	printf("table_len = %d\n", Table_length(table));
+
+	// print key/value pair using map functions
+	printf("key: atom_s Hello\tvalue mem loc: %p\n", Table_get(table, new_fprint));
+	List_T *list_for_print = Table_get(table, new_fprint);
+	printf("list len: %d\n", List_length(*list_for_print));
+	
+	List_map(*list_for_print, apply_print, NULL);
+
+	Table_map(table, free_table, NULL);
+	Table_free(&table);
+
+	return 0;
+}
