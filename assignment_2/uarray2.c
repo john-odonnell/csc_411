@@ -48,14 +48,14 @@ void *UArray2_at(T uarray2, int height, int width){
 	assert(height>=0 && height<uarray2->height);
 	assert(width>=0 && width<uarray2->width);
 	
-	return ((uarray2->array + (uarray2->size * height)) + (uarray2->size * width));
+	return ((uarray2->array + (height * width * uarray2->size)) + width);
 }
 
 void UArray2_map_row_major(T uarray2, void apply(void *p, int bit, void *cl), void *cl){
  	for(int i=0; i < (uarray2->height * uarray2->width); i++){
  		int *n;
 		NEW(n);
-		n = (uarray2->array + (i * uarray2->size));
+		n = (int *)(uarray2->array + (i * uarray2->size));
  		apply(n, i, cl);
 	}
 }

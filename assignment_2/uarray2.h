@@ -3,11 +3,11 @@
 #define T UArray2_T
 
 typedef struct T *T;
-struct T {
-	int height;
-	int width;
-	int size;
-	int *array;
+struct T { // UArray2_T struct definition
+	int height;	// #rows
+	int width;	// #cols
+	int size;	// size of type to be stored
+	char *array;	// char* allows accurate pointer arithmatic
 };
 
 extern T UArray2_new (int height, int width, int size);
