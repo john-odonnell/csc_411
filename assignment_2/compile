@@ -39,7 +39,7 @@ done
 # link together .o files + libraries to make executable binaries
 # using one case statement per executable binary
 case $link in
-  all|test) $CC $FLAGS $LFLAGS -o test uarray2.o test.o $LIBS 
+  all|test) $CC $FLAGS $LFLAGS -o test uarray2.o bit2.o test.o $LIBS 
                   linked=yes ;;
 esac
 

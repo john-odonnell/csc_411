@@ -2,6 +2,7 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include "mem.h"
+#include "bit2.h"
 
 void apply_add(void *p, int bit, void *cl){
 	(void)cl;
@@ -19,11 +20,10 @@ void apply_print(void *p, int bit, void *cl){
 	return;
 }
 
-int main(int argc, char *argv[]){
-	(void)argc; (void)argv;
-	
+void test_uarray2(){
 	int *to_print;
-
+	
+	printf("~~~UArray2~~~\n");
 	UArray2_T *uarray2;
 	NEW(uarray2);
 	*uarray2 = UArray2_new(5, 5, (int)sizeof(int));
@@ -50,6 +50,46 @@ int main(int argc, char *argv[]){
 	
 	UArray2_free(uarray2);
 	free(uarray2);
+
+	return;
+}
+
+void test_bit2(){
+	printf("~~Bit2~~~\n");
+	Bit2_T *bit2;
+	NEW(bit2);
+	*bit2 = Bit2_new(5, 5);
+
+	printf("height : %d\n", Bit2_height(*bit2));
+	printf("width  : %d\n", Bit2_width(*bit2));
+	
+	int bit = 1;
+	for(int i = 0; i<5; i++){
+		for(int j = 0; j<5; j++){
+			Bit2_put(*bit2, i, j, bit);
+			bit = (int)(!(bit && 1));
+		}
+	}
+	for(int i = 0; i<5; i++){
+		for(int j = 0; j<5; j++){
+			int to_print = Bit2_get(*bit2, i, j);
+			printf("%d,%d: %d\n", i, j, to_print);
+		}
+	}
+
+	Bit2_free(bit2);
+	free(bit2);
+
+	return;
+
+}
+
+int main(int argc, char *argv[]){
+	(void)argc; (void)argv;
+
+	test_uarray2();
+	printf("\n");
+	test_bit2();
 
 	return 0;
 }
