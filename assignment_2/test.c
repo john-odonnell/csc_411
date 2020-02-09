@@ -5,14 +5,16 @@
 
 void apply_add(void *p, int bit, void *cl){
 	(void)cl;
-	int *n = p;
+	int *n;
+	n = p;
 	*n = bit;
 	return;
 }
 
 void apply_print(void *p, int bit, void *cl){
 	(void)cl;
-	int *n = p;
+	int *n;
+	n = p;
 	printf("idx: %d\tloc: %p\tval: %d\n", bit, p, *n);
 	return;
 }
@@ -21,7 +23,6 @@ int main(int argc, char *argv[]){
 	(void)argc; (void)argv;
 	
 	int *to_print;
-	NEW(to_print);
 
 	UArray2_T *uarray2;
 	NEW(uarray2);
@@ -46,7 +47,7 @@ int main(int argc, char *argv[]){
 		printf("val arr%d: %d\n", i, *to_print);
 		to_print++;
 	}
-
+	
 	UArray2_free(uarray2);
 	free(uarray2);
 

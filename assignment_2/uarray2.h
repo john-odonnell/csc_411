@@ -20,7 +20,7 @@ extern int UArray2_size (T uarray2);
 extern void *UArray2_at (T uarray2, int height, int width);
 
 extern void UArray2_map_row_major (T uarray2, void apply(void *n, int bit, void *cl), void *cl);
-// extern void UArray2_map_col_major (T uarray2, void apply(int n, int bit, void *cl), void *cl);
+extern void UArray2_map_col_major (T uarray2, void apply(int n, int bit, void *cl), void *cl);
 
 #undef T
 #endif
