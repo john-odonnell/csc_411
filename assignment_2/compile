@@ -43,6 +43,11 @@ case $link in
                   linked=yes ;;
 esac
 
+case $link in
+  all|sudoku) $CC $FLAGS $LFLAGS -o sudoku uarray2.o sudoku.o -lpnmrdr $LIBS
+	  	  linked=yes ;;
+esac
+
 ########### the final part is the same for each assignment
 # error if asked to link something we didn't recognize
 if [ $linked = no ]; then
