@@ -3,11 +3,11 @@
 #define T UArray2_T
 
 typedef struct T *T;
-struct T {
-	int height;
-	int width;
-	int size;
-	int *array;
+struct T { // UArray2_T struct definition
+	int height;	// #rows
+	int width;	// #cols
+	int size;	// size of type to be stored
+	char *array;	// char* allows accurate pointer arithmatic
 };
 
 extern T UArray2_new (int height, int width, int size);
@@ -20,7 +20,7 @@ extern int UArray2_size (T uarray2);
 extern void *UArray2_at (T uarray2, int height, int width);
 
 extern void UArray2_map_row_major (T uarray2, void apply(void *n, int bit, void *cl), void *cl);
-// extern void UArray2_map_col_major (T uarray2, void apply(int n, int bit, void *cl), void *cl);
+extern void UArray2_map_col_major (T uarray2, void apply(int n, int bit, void *cl), void *cl);
 
 #undef T
 #endif
