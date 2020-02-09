@@ -4,10 +4,9 @@
 
 typedef struct T *T;
 struct T { // Bit2_T struct definition
-	int height;
-	int width;
-	unsigned char *bytes;
-	unsigned long *words;
+	int height;		// height of 2d bit array
+	int width;		// width of 2d bit array
+	char *array;
 };
 
 extern T Bit2_new (int height, int width);
