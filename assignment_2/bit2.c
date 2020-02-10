@@ -78,3 +78,20 @@ int Bit2_get(T bit2, int height, int width){
 
 	return ((bit2->array[n/4]>>(n%4))&1);
 }
+
+void Bit2_map_row_major(T bit2, void apply(int n, int bit, void *cl), void *cl){
+	for(int i=0; i<((bit2->height)*(bit2->width)); i++){
+		apply(i, ((bit2->array[i/4]>>(i%4))&1), cl);
+	}
+	return;
+}
+
+void Bit2_map_col_major(T bit2, void apply(int n, int bit, void *cl), void *cl){
+	for(int i=0; i<(bit2->width); i++){
+		for(int j=0; j<(bit2->height); j++){
+			apply(i, ((bit2->array[i/4]>>(i%4))&1), cl);
+		}
+	}
+	return;
+}
+

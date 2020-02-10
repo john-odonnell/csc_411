@@ -48,7 +48,7 @@ void *UArray2_at(T uarray2, int height, int width){
 	assert(height>=0 && height<uarray2->height);
 	assert(width>=0 && width<uarray2->width);
 	
-	return ((uarray2->array + (height * width * uarray2->size)) + width);
+	return ((uarray2->array + (height * uarray2->width * uarray2->size)) + (width * uarray2->size));
 }
 
 void UArray2_map_row_major(T uarray2, void apply(void *p, int bit, void *cl), void *cl){

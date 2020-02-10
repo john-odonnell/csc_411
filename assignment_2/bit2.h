@@ -18,7 +18,7 @@ extern int Bit2_width (T bit2);
 extern int Bit2_get(T bit2, int height, int width);
 extern int Bit2_put(T bit2, int height, int width, int bit);
 
-extern void Bit2_map_rpw_major(T bit2, void apply(int n, int bit, void *cl), void *cl);
+extern void Bit2_map_row_major(T bit2, void apply(int n, int bit, void *cl), void *cl);
 extern void Bit2_map_col_major(T bit2, void apply(int n, int bit, void *cl), void *cl);
 
 #undef T
