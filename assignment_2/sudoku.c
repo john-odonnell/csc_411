@@ -31,57 +31,132 @@ void fill_uarray2(UArray2_T uarray2, Pnmrdr_T pnm){
 				exit(1);
 			}
 			r_location = UArray2_at(uarray2, i, j);
-			*r_location = n;
-			printf("%d,%d: loc: %p\t%d\t%d\n", i, j, (void *)r_location, n, *r_location);
+			*r_location = n;	
 		}
 	}
 	return;
 }
 
-bool check_rows(UArray2_T puzzle){
-	for(int i=0; i<9; i++){
-		for(int j=0; j<8; j++){
-			int *to_check = UArray2_at(puzzle, i, j);
-			for(int k=j+1; k<9; k++){
-				int *check_against = UArray2_at(puzzle, i, k);
-				if(*to_check == *check_against)
-					return false;
-			}
-		}
-	}
-	return true;
-}
-
-bool check_columns(UArray2_T puzzle){
-	for(int i=0; i<9; i++){
-		for(int j=0; j<8; j++){
-			int *to_check = UArray2_at(puzzle, i, j);
-			for(int k=j+1; k<9; k++){
-				int *check_against = UArray2_at(puzzle, i, k);
-				if(*to_check == *check_against)
-					return false;
-			}
-		}
-	}
-	return true;
-}
-
-bool check_solution(UArray2_T puzzle){
-	// Set_T *base_set;
-	// NEW(base_set);
-	// *base_set = Set_new(9, cmp, hash);
-
-	if(check_columns(puzzle) && check_rows(puzzle)) // && check_boxes(puzzle))
-		return true;
+int cmp(const void *x, const void *y){
+	if(*(int *)x > *(int *)y)
+		return 1;
+	else if(*(int *)x < *(int *)y)
+		return -1;
 	else
-		return false;
+		return 0;
 }
 
-void apply_print(void *p, int bit, void *cl){
-	(void)bit;	(void)cl;
-	int *l = p;
-	printf("%d\n", *l);
+unsigned hash(const void *x){
+	return (*(int *)x);
+}
+
+bool check_columns(UArray2_T *puzzle, Set_T *base_set){
+	for(int i=0; i<9; i++){
+		Set_T column;
+		column = Set_new(9, cmp, hash);
+		for(int j=0; j<9; j++){
+			Set_put(column, (int *)UArray2_at(*puzzle, j, i));
+		}
+		
+		Set_T diff;
+		diff = Set_diff(*base_set, column);
+
+		if(Set_length(diff) != 0){
+			Set_free(&diff);
+			Set_free(&column);
+			return false;
+		}
+		
+		Set_free(&diff);
+		Set_free(&column);
+	}
+	return true;
+}
+
+bool check_rows(UArray2_T *puzzle, Set_T *base_set){
+	for(int i=0; i<9; i++){
+		Set_T row;
+		row = Set_new(9, cmp, hash);
+		for(int j=0; j<9; j++){
+			Set_put(row, (int *)UArray2_at(*puzzle, i, j));
+		}
+
+		Set_T diff;
+		diff = Set_diff(*base_set, row);
+
+		if(Set_length(diff) != 0){
+			Set_free(&diff);
+			Set_free(&row);
+			return false;
+		}
+
+		Set_free(&diff);
+		Set_free(&row);
+	}
+	return true;
+}
+
+bool check_boxes(UArray2_T *puzzle, Set_T *base_set){
+	for(int i=0; i<9; i+=3){
+		for(int j=0; j<9; j+=3){
+			Set_T box;
+			box = Set_new(9, cmp, hash);
+			for(int k=i; k<i+3; k++){
+				for(int m=j; m<j+3; m++){
+					Set_put(box, (int *)UArray2_at(*puzzle, k, m));
+				}
+			}
+			
+			Set_T diff;
+			diff = Set_diff(*base_set, box);
+
+			if(Set_length(diff) != 0){
+				Set_free(&diff);
+				Set_free(&box);
+				return false;
+			}
+
+			Set_free(&diff);
+			Set_free(&box);
+		}
+	}
+	return true;
+}
+
+void set_apply(const void *member, void *cl){
+	(void)cl;
+	int *n;
+	n = (int *)member;
+	printf("%d\n", *n);
 	return;
+}
+
+bool check_solution(UArray2_T *puzzle){
+	Set_T *base_set;
+	NEW(base_set);
+	*base_set = Set_new(9, cmp, hash);
+	
+	int base[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+	for(int i=0; i<9; i++){
+		Set_put(*base_set, &base[i]);
+	} // WHERE I LEFT OFF
+		// COMPARING EACH ROW/COLUMN/BOX TO THE BASE SET
+		// A LOT EASIER THAN ITERATING THROUGH THE ENTIRE PUZZLE
+		// MANY TIMES
+	
+	// printf("Base set:\t");	
+	// Set_map(*base_set, set_apply, NULL);
+
+	if(check_columns(puzzle, base_set) && check_rows(puzzle, base_set) && check_boxes(puzzle, base_set)){
+		Set_free(base_set);
+		free(base_set);
+		return true;
+	}
+	else{
+		Set_free(base_set);
+		free(base_set);
+		return false;
+	}
 }
 
 int main(int argc, char *argv[]){
@@ -115,16 +190,7 @@ int main(int argc, char *argv[]){
 	free(pnm);
 	fclose(stream);
 
-	for(int i=0; i<9; i++){
-		for(int j=0; j<9; j++){
-			int *val = UArray2_at(*puzzle, i, j);
-			printf("%d,%d: loc: %p\t%d\n", i, j, (void *)val, *val);
-		}
-	}
-		
-	UArray2_map_row_major(*puzzle, apply_print, NULL);
-
-	if (check_solution(*puzzle)){
+	if (check_solution(puzzle)){
 		UArray2_free(puzzle);
 		free(puzzle);
 		printf("Good Solution\n");
