@@ -1,3 +1,5 @@
+#include "array.h"
+
 #ifndef UARRAY2_INCLUDED
 #define UARRAY2_INCLUDED
 #define T UArray2_T
@@ -7,7 +9,7 @@ struct T { // UArray2_T struct definition
 	int height;	// #rows
 	int width;	// #cols
 	int size;	// size of type to be stored
-	char *array;	// char* allows accurate pointer arithmatic
+	Array_T *array;// char* allows accurate pointer arithmatic
 };
 
 extern T UArray2_new (int height, int width, int size);
