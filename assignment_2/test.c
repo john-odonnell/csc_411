@@ -3,6 +3,8 @@
 #include "stdlib.h"
 #include "mem.h"
 #include "bit2.h"
+#include "set.h"
+#include "atom.h"
 
 void apply_add(void *p, int bit, void *cl){
 	(void)cl;
@@ -17,6 +19,14 @@ void apply_print(void *p, int bit, void *cl){
 	int *n;
 	n = p;
 	printf("idx: %d\tloc: %p\tval: %d\n", bit, p, *n);
+	return;
+}
+
+void apply_set(const void *member, void *cl){
+	(void)cl;
+	int *n;
+	n = (int *)member;
+	printf("%d\n", *n);
 	return;
 }
 
@@ -84,12 +94,58 @@ void test_bit2(){
 
 }
 
+int cmp(const void *x, const void *y){
+	if(*(int *)x > *(int *)y)
+		return 1;
+	else if(*(int *)x < *(int *)y)
+		return -1;
+	else
+		return 1;
+}
+
+unsigned hash(const void *x){
+	return *(unsigned *)x;
+}
+
+void test_sets(){
+	
+	printf("~~~Testing Sets of Ints~~~\n");
+	Set_T *set;
+	NEW(set);
+
+	*set = Set_new(9, cmp, hash);
+	printf("Set initialized\n");
+	int *x;
+	NEW(x);
+	for(int i=1; i<10; i++){
+	       	*x = i;
+		Set_put(*set, x);
+	}
+
+	int *n;
+	NEW(n);
+	printf("Set insertion complete\n");
+	printf("set len: %d\n", Set_length(*set));
+	
+	*n = 1;
+	printf("1 in set: %d\n", Set_member(*set, n));
+
+	Set_map(*set, apply_set, NULL);
+
+	free(n);
+	Set_free(set);
+	free(set);
+	free(x);	
+	return;
+}
+
 int main(int argc, char *argv[]){
 	(void)argc; (void)argv;
 
 	test_uarray2();
 	printf("\n");
 	test_bit2();
-
+	printf("\n");
+	test_sets();
 	return 0;
 }
