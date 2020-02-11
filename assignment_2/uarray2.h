@@ -9,7 +9,7 @@ struct T { // UArray2_T struct definition
 	int height;	// #rows
 	int width;	// #cols
 	int size;	// size of type to be stored
-	Array_T *array;// char* allows accurate pointer arithmatic
+	Array_T *array; // pointer to Array_T, which contains storage array
 };
 
 extern T UArray2_new (int height, int width, int size);
