@@ -1,3 +1,5 @@
+#include "bit.h"
+
 #ifndef BIT2_INCLUDED
 #define BIT2_INCLUDED
 #define T Bit2_T
@@ -6,7 +8,7 @@ typedef struct T *T;
 struct T { // Bit2_T struct definition
 	int height;		// height of 2d bit array
 	int width;		// width of 2d bit array
-	char *array;
+	Bit_T *bit_array;
 };
 
 extern T Bit2_new (int height, int width);
