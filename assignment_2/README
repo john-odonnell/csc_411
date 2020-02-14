@@ -5,4 +5,4 @@ Sudoku has been correctly implemented using UArray2 and Hanson Sets.
 Unblackedges can successfully find edge pixels and convert them.
 	--does not output correctly
 
-Approximately 20 manhours spent on Assignment 2: iii
+16 manhours spent on Assignment 2: iii
