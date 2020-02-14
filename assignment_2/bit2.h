@@ -21,9 +21,9 @@ extern int Bit2_height (T bit2);
 extern int Bit2_width (T bit2);
 // returns the width of a given Bit2_T
 
-extern int Bit2_get(T bit2, int height, int width);
+extern int Bit2_get(T bit2, int i, int j);
 // returns the bit value of the (i, j) position in the given Bit2_T array
-extern int Bit2_put(T bit2, int height, int width, int bit);
+extern int Bit2_put(T bit2, int i, int j, int bit);
 // changes the value of the bit at the (i, j) position in the given Bit2_T array to bit
 
 extern void Bit2_map_row_major(T bit2, void apply(int n, int bit, void *cl), void *cl);

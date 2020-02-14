@@ -25,7 +25,7 @@ extern int UArray2_width (T uarray2);
 extern int UArray2_size (T uarray2);
 // returns the size of each entry in a given UArray2_T
 
-extern void *UArray2_at (T uarray2, int height, int width);
+extern void *UArray2_at (T uarray2, int i, int j);
 // returns a void pointer to the memory location within a given UArray2_T
 // that represent the (i, j) index
 
