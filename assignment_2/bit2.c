@@ -3,6 +3,7 @@
 #include "assert.h"
 #include "mem.h"
 #include "bit2.h"
+#include "bit.h"
 
 #define T Bit2_T
 
@@ -19,11 +20,11 @@ T Bit2_new(int height, int width){
 	bit2->height = height;
 	bit2->width = width;
 	
-	// total number of characters stored in array
-	int words = ((height * width)/4) + 1;
+	Bit_T *bit_arr;
+	NEW(bit_arr);
+	*bit_arr = Bit_new(height*width);
 	
-	// allocate space for bit2 array and return struct
-	bit2->array = CALLOC(words, sizeof(char));
+	bit2->bit_array = bit_arr;
 	return bit2;
 }
 
@@ -31,9 +32,8 @@ T Bit2_new(int height, int width){
 void Bit2_free(T *bit2){
 	// assert valid Bit2_t
 	assert(bit2 && *bit2);
-	// free allocated space for array struct member
-	FREE((*bit2)->array);
-	// free allocated space for struct member
+	Bit_free((*bit2)->bit_array);
+	FREE((*bit2)->bit_array);
 	FREE(*bit2);
 }
 
@@ -49,49 +49,54 @@ int Bit2_width(T bit2){
 	return bit2->width;
 }
 
-// insert bit into 2d bit array at (height, width)
-int Bit2_put(T bit2, int height, int width, int bit){
+// insert bit into 2d bit array at (i, j)
+// (i, j) translates to the one dimensional idx n by the realtionship
+// n = (i * bit2->width) + j
+int Bit2_put(T bit2, int i, int j, int bit){
 	// assert valid array, location and bit value
 	assert(bit2);
-	assert(height>=0 && height<(bit2->height));
-	assert(width>=0 && width<(bit2->width));
+	assert(i>=0 && i<(bit2->height));
+	assert(j>=0 && j<(bit2->width));
 	assert(bit==0 || bit==1);
 	
 	// find char in array
-	int n = (height * bit2->width) + width;
-	int prev;
-	prev = ((bit2->array[n/4]>>(n%4))&1);
-
-	if(bit==1)
-		bit2->array[n/4] |=   1<<(n%4);
-	else
-		bit2->array[n/4] &= ~(1<<(n%4));
-	return prev;
+	int n = (i * bit2->width) + j;
+	return Bit_put(*(bit2->bit_array), n, bit);
 }
 
-int Bit2_get(T bit2, int height, int width){
+// returns the bit stored in the 2d bit array at (i, j)
+// uses the same relationship as Bit2_put (see above)
+int Bit2_get(T bit2, int i, int j){
 	assert(bit2);
-	assert(height>=0 && height<(bit2->height));
-	assert(width>=0 && width<(bit2->width));
+	assert(i>=0 && i<(bit2->height));
+	assert(j>=0 && j<(bit2->width));
 
-	int n = (height * bit2->width) + width;
-
-	return ((bit2->array[n/4]>>(n%4))&1);
+	int n = (i * bit2->width) + j;
+	return Bit_get(*(bit2->bit_array), n);
 }
 
+// maps the apply function onto each bit in the 2d bit array
+// maps in row major order (j increments faster than i)
 void Bit2_map_row_major(T bit2, void apply(int n, int bit, void *cl), void *cl){
-	for(int i=0; i<((bit2->height)*(bit2->width)); i++){
-		apply(i, ((bit2->array[i/4]>>(i%4))&1), cl);
-	}
+	Bit_map(*(bit2->bit_array), apply, cl);
 	return;
 }
 
-void Bit2_map_col_major(T bit2, void apply(int n, int bit, void *cl), void *cl){
-	for(int i=0; i<(bit2->width); i++){
-		for(int j=0; j<(bit2->height); j++){
-			apply(i, ((bit2->array[i/4]>>(i%4))&1), cl);
-		}
-	}
-	return;
-}
+// maps the apply function onto each bit in the 2d bit array
+// maps in column major order (i increments faster than j)
+// void Bit2_map_col_major(T bit2, void apply(int n, int bit, void *cl), void *cl){
+// 	int n;
+// 	Bit_T *bit_arr;
+// 	NEW(bit_arr);       
+// 	bit_arr = bit2->bit_array;
+// 	for(int i=0; i<(bit2->width); i++){
+// 		for(int j=0; j<(bit2->height); j++){
+// 			n = (j * bit2->width) + i;
+// 			apply(i, (((*bit_arr)->bytes[n/8]>>(n%8))&1), cl);
+// 		}
+// 	}
+// 	Bit_free(bit_arr);
+// 	free(bit_arr);
+// 	return;
+// }
 

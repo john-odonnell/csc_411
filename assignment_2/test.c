@@ -64,6 +64,12 @@ void test_uarray2(){
 	return;
 }
 
+void bit_apply(int n, int bit, void *cl){
+	(void)cl;
+	printf("%d: %d\n", n, bit);
+	return;
+}
+
 void test_bit2(){
 	printf("~~Bit2~~~\n");
 	Bit2_T *bit2;
@@ -86,6 +92,8 @@ void test_bit2(){
 			printf("%d,%d: %d\n", i, j, to_print);
 		}
 	}
+
+	Bit2_map_row_major(*bit2, bit_apply, NULL);
 
 	Bit2_free(bit2);
 	free(bit2);
@@ -142,9 +150,9 @@ void test_sets(){
 int main(int argc, char *argv[]){
 	(void)argc; (void)argv;
 
-	test_uarray2();
+	// test_uarray2();
 	// printf("\n");
-	// test_bit2();
+	test_bit2();
 	// printf("\n");
 	// test_sets();
 	return 0;
