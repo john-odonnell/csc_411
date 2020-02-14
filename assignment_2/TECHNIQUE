@@ -1,0 +1,20 @@
+John O'Donnell
+	I have incorporated a couple important programming techniques since January 2020 that I
+feel are important enough to mention. Before this current semester, my approach to programming 
+projects and assignments was to create a new file and mind-vomit into my IDE until I had what I
+thought was a program that should do what I intended. This is probably the worst approach to
+assignments and projects, and cost me a lot of time and stress. More recently, I've started
+analysing a problem beforehand with pencil and paper, as I find that this translates to a more
+direct flow of good ideas from mind to program. If an algorithm, its use cases, and how it
+should approach edge cases is already established on paper, then implementing that algorithm
+is much easier. After this step, I being implementing portions of the algorithm, as opposed
+to attempting to implement all functionality on my first attempt. By establishing the basics
+first, that makes the more complicated portions of a program infinitely easier. This also
+prevents minor bugs from penetrating the program from it's most basic aspects, which can
+sometimes be harder to catch further on.
+	To recap, my approach to programming projects and assignments is as follows:
+	1. Outline major algorithms and data structures on paper
+	2. Implement basic versions of the data structures to confirm functionality
+	3. Implement algorithms and solutions focusing on adding functionality along the way
+	4. Tweak the already implemented algorithms and data structures in order to acheive
+	   desired output
