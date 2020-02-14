@@ -49,7 +49,9 @@ int Bit2_width(T bit2){
 	return bit2->width;
 }
 
-// insert bit into 2d bit array at (height, width)
+// insert bit into 2d bit array at (i, j)
+// (i, j) translates to the one dimensional idx n by the realtionship
+// n = (i * bit2->width) + j
 int Bit2_put(T bit2, int i, int j, int bit){
 	// assert valid array, location and bit value
 	assert(bit2);
@@ -62,20 +64,26 @@ int Bit2_put(T bit2, int i, int j, int bit){
 	return Bit_put(*(bit2->bit_array), n, bit);
 }
 
-int Bit2_get(T bit2, int height, int width){
+// returns the bit stored in the 2d bit array at (i, j)
+// uses the same relationship as Bit2_put (see above)
+int Bit2_get(T bit2, int i, int j){
 	assert(bit2);
-	assert(height>=0 && height<(bit2->height));
-	assert(width>=0 && width<(bit2->width));
+	assert(i>=0 && i<(bit2->height));
+	assert(j>=0 && j<(bit2->width));
 
-	int n = (height * bit2->width) + width;
+	int n = (i * bit2->width) + j;
 	return Bit_get(*(bit2->bit_array), n);
 }
 
+// maps the apply function onto each bit in the 2d bit array
+// maps in row major order (j increments faster than i)
 void Bit2_map_row_major(T bit2, void apply(int n, int bit, void *cl), void *cl){
 	Bit_map(*(bit2->bit_array), apply, cl);
 	return;
 }
 
+// maps the apply function onto each bit in the 2d bit array
+// maps in column major order (i increments faster than j)
 // void Bit2_map_col_major(T bit2, void apply(int n, int bit, void *cl), void *cl){
 // 	int n;
 // 	Bit_T *bit_arr;
