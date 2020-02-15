@@ -186,14 +186,12 @@ int main(int argc, char *argv[]){
 		UArray2_free(puzzle);
 		free(puzzle);
 		// remoce/comment before submission
-		printf("Good Solution\n");
 		exit(0);
 	}
 	else{
 		UArray2_free(puzzle);
 		free(puzzle);
 		// remove/comment before submission
-		printf("Bad Solution\n");
 		exit(1);
 	}
 
