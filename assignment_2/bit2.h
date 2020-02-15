@@ -28,8 +28,6 @@ extern int Bit2_put(T bit2, int i, int j, int bit);
 
 extern void Bit2_map_row_major(T bit2, void apply(int n, int bit, void *cl), void *cl);
 // calls the apply() function on each bit in the given Bit2_T array in row major order
-extern void Bit2_map_col_major(T bit2, void apply(int n, int bit, void *cl), void *cl);
-// calls the apply() function on each bit in the given Bit2_T array in column major order
 
 #undef T
 #endif
