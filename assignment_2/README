@@ -39,7 +39,6 @@ Design Checklist:
 	Bit2_get, which returns the value (0/1) of a bit located in a given Bit2_T at a given index (i, j)
 	Bit2_put, which sets the value of a bit located in a given Bit2_T at a given index (i, j) to a given value (0/1)
 	Bit2_map_row_major, which applies a given function to every bit in a given Bit2_T in row major order
-	Bit2_map_col_major, which applies a given function to every bit in a given Bit2_T in column major order
 4. What representation will you use, and what invariants will it satisfy?
 	The Bit2_T struct is similar to the UArray2_T struct wherein it contains members defining the height and width
 	of the 2d bit array, and also contains a pointer to a Hanson Bit vector which is initialized in the Bit2_new
