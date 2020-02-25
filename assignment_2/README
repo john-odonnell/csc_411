@@ -1,8 +1,52 @@
 Partners: John O'Donnell and Marcus Comolli
 
-The UArray2 and Bit2 interfaces and implementations are functional.
+All ideas and code is our own.
+
+UArray2 has been implemented
+Design Checklist:
+1. What is the abstract thing you are trying to represent?
+	The UArray2 interface represents a set of i rows and j columns that make up any two
+	dimensional array.
+2. What functions will you offer, and what are the contracts of those functions?
+	The UArray2 interface offers eight functions:
+	
+	UArray2_new, which returns a new UArray2 struct provided a given height, width and unit size
+	UArray2_free, which frees memory on the heap allocated for the 2d array given a pointer to its location
+	UArray2_height, which returns the height of a 2d array represented by a given UArray2_T
+	UArray2_width, which returns the width of a 2d array represented by a given UArray2_T
+	UArray2_size, which returns the unit size of the 2d array represented by a given UArray2_T
+	UArray2_at, which returns a pointer to the data stored at the given (i, j) index in a given UArray2_T
+	UArray2_map_row_major, which applies a given function to every entry in a given UArray2_T in row major order
+	UArray2_map_col_major, which applies a given function to every entry in a given UArray2_T in column major order
+4. What representation will you use, and what invariants will it satisfy?
+	The UArray2_T struct will contain private members height, width, and size, along with a pointer to a Hanson Array
+	which is initializes in the UArray2_new function. Because of this, UArray2 is technically storing its 2d array
+	of values into a 2d array of (height * width) length, in row major order. For any index pair (i, j) in the 2d
+	array, it is actually at an index n within a 1d array where n = (i * width) + j.
+
+Bit2 has been implemented
+Design Checklist:
+1. What is the abstract thing you are trying to represent?
+	The Bit2 interface represents a set of i rows and j columns that make up a two dimensional
+	array of bits.
+2. What functions will you offer, and what are the contracts of those functions?
+	The Bit2 interface offers eight functions:
+	
+	Bit2_new, which returns a new Bit2_T struct of a given size height x width
+	Bit2_free, which frees memory allocated on the heap for the 2d array given a pointer to its location
+	Bit2_height, which returns the height of a given Bit2_T
+	Bit2_width, which returns the width of a given Bit2_T
+	Bit2_get, which returns the value (0/1) of a bit located in a given Bit2_T at a given index (i, j)
+	Bit2_put, which sets the value of a bit located in a given Bit2_T at a given index (i, j) to a given value (0/1)
+	Bit2_map_row_major, which applies a given function to every bit in a given Bit2_T in row major order
+4. What representation will you use, and what invariants will it satisfy?
+	The Bit2_T struct is similar to the UArray2_T struct wherein it contains members defining the height and width
+	of the 2d bit array, and also contains a pointer to a Hanson Bit vector which is initialized in the Bit2_new
+	function. Bit2_T is an interface that allows for using one dimensional Hanson bit vectors for two dimensional
+	applications. The data is stored in row major order in the 1d vector, where a bit value stored at (i, j) in the
+	2d array is accessed by passing the parameter n to Hanson's Bit interface, where n = (i * width) + j.
+
 Sudoku has been correctly implemented using UArray2 and Hanson Sets.
-Unblackedges can successfully find edge pixels and convert them.
-	--does not output correctly
+Unblackedges can successfully find edge pixels and convert them from black to white.
 
 16 manhours spent on Assignment 2: iii

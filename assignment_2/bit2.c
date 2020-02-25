@@ -81,22 +81,3 @@ void Bit2_map_row_major(T bit2, void apply(int n, int bit, void *cl), void *cl){
 	Bit_map(*(bit2->bit_array), apply, cl);
 	return;
 }
-
-// maps the apply function onto each bit in the 2d bit array
-// maps in column major order (i increments faster than j)
-// void Bit2_map_col_major(T bit2, void apply(int n, int bit, void *cl), void *cl){
-// 	int n;
-// 	Bit_T *bit_arr;
-// 	NEW(bit_arr);       
-// 	bit_arr = bit2->bit_array;
-// 	for(int i=0; i<(bit2->width); i++){
-// 		for(int j=0; j<(bit2->height); j++){
-// 			n = (j * bit2->width) + i;
-// 			apply(i, (((*bit_arr)->bytes[n/8]>>(n%8))&1), cl);
-// 		}
-// 	}
-// 	Bit_free(bit_arr);
-// 	free(bit_arr);
-// 	return;
-// }
-
