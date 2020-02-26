@@ -10,10 +10,10 @@ void apply_print (int i, int j, UArray2b_T array2b, void *elem, void *cl) {
 
 int main(int argc, char *argv[]) {
 	(void)argc; (void)argv;
-
 	UArray2b_T *array2b;
 	NEW(array2b);
-	*array2b = UArray2b_new(10, 10, sizeof(int), 3);
+        *array2b = UArray2b_new(10, 10, sizeof(int), 36);
+	printf("ok\n");
 	printf("array2b loc: %p\n", (void *)array2b);
 	printf("first elem : %p\n", UArray2b_at(*array2b, 0, 0));
 	

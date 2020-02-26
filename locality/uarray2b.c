@@ -25,7 +25,7 @@ struct T {
 T UArray2b_new (int width, int height, int size, int blocksize) {
 	// assert valid dimensions
 	assert(height>0 && width>0 && size>0 && blocksize>0);
-	
+        assert(blocksize >= size);
 	// allocate for new blocked 2d array
 	T array2b;
 	NEW(array2b);
@@ -36,11 +36,17 @@ T UArray2b_new (int width, int height, int size, int blocksize) {
 	array2b->size = size;
 	array2b->blocksize = blocksize;
 	
+        printf("%d, %d, %d, %d\n", width, height, size, blocksize);
 	// find number of blocks, width and height of blocks
-	int blocks_w, blocks_h;
-	blocks_w = (int)ceil((double)width/(double)blocksize);
-	blocks_h = (int)ceil((double)height/(double)blocksize);
+	int block_side, blocks_w, blocks_h;
+        //int num_elems = (int) floor((double) blocksize / (double) size);
+        int num_elems = blocksize / size;
+        //block_side = (int) floor(sqrt((double) num_elems));
+        block_side = (int) sqrt((double) num_elems);
+        blocks_w = (int)ceil((double)width/(double)block_side);
+	blocks_h = (int)ceil((double)height/(double)block_side);
 	
+        printf("%d, %d, %lu\n", blocks_w, blocks_h, sizeof(void*));
 	// allocate for new 2d array of blocks
 	UArray2_T *block_arr;
 	NEW(block_arr);
@@ -52,7 +58,7 @@ T UArray2b_new (int width, int height, int size, int blocksize) {
 		for (int j=0; j<blocks_w; j++) {
 			Array_T *block;
 			NEW(block);
-			*block = Array_new((blocksize * blocksize), size);
+			*block = Array_new(block_side * block_side, size);
 
 			Array_T **block_ptr = UArray2_at(*block_arr, i, j);
 			*block_ptr = block;
@@ -66,8 +72,9 @@ T UArray2b_new (int width, int height, int size, int blocksize) {
 }
 
 T UArray2b_new_64K_block (int width, int height, int size) {
-	int num_elems = (int)floor(64000.0 / (double)size);
-
+	//int num_elems = (int)floor(65536.0 / (double)size);
+        //int dim = (int)floor(sqrt((double) num_elems));
+        return UArray2b_new(width, height, size, 65536); 
 }
 
 void apply_free (void *p, int n, void *cl) {
