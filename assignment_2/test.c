@@ -150,9 +150,9 @@ void test_sets(){
 int main(int argc, char *argv[]){
 	(void)argc; (void)argv;
 
-	// test_uarray2();
+	test_uarray2();
 	// printf("\n");
-	test_bit2();
+	// test_bit2();
 	// printf("\n");
 	// test_sets();
 	return 0;
