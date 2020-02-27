@@ -6,13 +6,11 @@
 #include "arrayrep.h"
 #include "mem.h"
 #include "uarray2.h"
-
 #define T UArray2_T
 
 // allocate mem for new UArray2_T and the Array_T referenced within
 T UArray2_new(int height, int width, int size){
-	printf("%d, %d, %d\n", height, width, size);
-        assert(height>0 && width >0 && size>0);
+	assert(height>0 && width >0 && size>0);
 
 	T uarray2;
 	NEW(uarray2);
