@@ -10,8 +10,10 @@ extern T UArray2b_new_64K_block (int width, int height, int size);
 /* new blocked 2d array: blocksize as large as possible provided
  * block occupies at most 64KB (if possible) */
 
+// frees allocated memory
 extern void UArray2b_free (T *array2b);
 
+// returns struct members
 extern int UArray2b_width	(T array2b);
 extern int UArray2b_height	(T array2b);
 extern int UArray2b_size	(T array2b);
