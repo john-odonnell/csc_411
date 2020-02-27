@@ -68,9 +68,8 @@ T UArray2b_new (int width, int height, int size, int blocksize) {
 			// Array_T block = Array_new((blocksize * blocksize), size);
 
 			Array_T **block_ptr = UArray2_at(array2b->blocks, i, j);
-			//*block_ptr = &block;
 			*block_ptr = block;
-			printf("box %d,%d: %p\n", i, j, (void *)*(block_ptr));
+			printf("box %d,%d: %p\n", i, j, (void *)(block_ptr));
 			// free(block);
 		}
 	}
@@ -92,6 +91,7 @@ void apply_free (int i, int j, UArray2_T uarray2, void *elem, void *cl) {
 	// free the array pointed to by the contents of the array
 	// Array_T *block = p;
 	Array_free(*(Array_T **)elem);
+	FREE(*(Array_T **)elem);
 	printf("block %d,%d free'd\n", i, j);
 	// FREE(p);
 	// printf("pointer free'd\n");
