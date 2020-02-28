@@ -14,8 +14,10 @@ int main(int argc, char *argv[]) {
 	UArray2b_T *array2b;
 	NEW(array2b);
 	*array2b = UArray2b_new(10, 10, sizeof(int), 3);
+	// *array2b = UArray2b_new_64K_block(10, 10, sizeof(int));
 	printf("array2b loc:\t%p\n", (void *)array2b);
 	printf("first elem :\t%p\n", UArray2b_at(*array2b, 0, 0));
+	printf("blocksize  :\t%d\n", UArray2b_blocksize(*array2b));
 	
 	int *p;
 	for (int i=0; i<10; i++) {

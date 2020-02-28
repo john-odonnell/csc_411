@@ -33,26 +33,19 @@ T UArray2b_new (int width, int height, int size, int blocksize) {
 	// allocate for new blocked 2d array
 	T array2b;
 	NEW(array2b);
-	printf("memory for array2b allocated\n");
 	
 	// assign members
 	array2b->width = width;
 	array2b->height = height;
 	array2b->size = size;
 	array2b->blocksize = blocksize;
-	printf("members assigned\n");
 	
 	// find number of blocks, width and height of blocks
 	int blocks_w, blocks_h;
 	blocks_w = (int)ceil((double)width/(double)blocksize);
 	blocks_h = (int)ceil((double)height/(double)blocksize);
-	
-	// allocate for new 2d array of blocks
-	// UArray2_T *block_arr;
-	// NEW(block_arr);
-	// *block_arr = UArray2_new(blocks_w, blocks_h, sizeof(void *));
+
 	array2b->blocks = UArray2_new(blocks_w, blocks_h, sizeof(void *));	
-	printf("UArray2_T of blocks allocated");
 	
 	// each location in the 2d array of blocks holds a pointer to a
 	// 1d array that holds the values stored within the overall structure
@@ -61,42 +54,25 @@ T UArray2b_new (int width, int height, int size, int blocksize) {
 			Array_T *block;
 			NEW(block);
 			*block = Array_new((blocksize * blocksize), size);
-			
-			// Array_T block = Array_new((blocksize * blocksize), size);
-			printf("initialized @ %p\n", (void *)block);
-
-			// Array_T block = Array_new((blocksize * blocksize), size);
 
 			Array_T **block_ptr = UArray2_at(array2b->blocks, i, j);
 			*block_ptr = block;
-			printf("box %d,%d: %p\n", i, j, (void *)(block_ptr));
-			// free(block);
 		}
 	}
-	
-	// assign member
-	// array2b->blocks = block_arr;
-	printf("blocks loc:\t%p\n", (void *)&(array2b->blocks));
 
 	return array2b;
 }
 
-// T UArray2b_new_64K_block (int width, int height, int size) {
-// 	int num_elems = (int)floor(64000.0 / (double)size);
-// 
-// }
+T UArray2b_new_64K_block (int width, int height, int size) {
+	int blocksize = (int)floor(sqrt(64000 / size));
+	return UArray2b_new(width, height, size, blocksize);
+}
 
 void apply_free (int i, int j, UArray2_T uarray2, void *elem, void *cl) {
-	(void)uarray2, (void)cl;
+	(void)i; (void)j; (void)uarray2; (void)cl;
 	// free the array pointed to by the contents of the array
-	// Array_T *block = p;
 	Array_free(*(Array_T **)elem);
 	FREE(*(Array_T **)elem);
-	printf("block %d,%d free'd\n", i, j);
-	// FREE(p);
-	// printf("pointer free'd\n");
-	// free the pointer
-	// FREE(block);
 	return;
 }
 
@@ -105,13 +81,10 @@ void UArray2b_free (T *array2b) {
 	assert(array2b && *array2b);
 	
 	// map over the 2d array of blocks to deallocate underlying 1d arrays
-	printf("blocks loc:\t%p\n", (void *)((*array2b)->blocks));
 	UArray2_map_row_major((*array2b)->blocks, apply_free, NULL);
 	
 	// free substructure UArray2
 	UArray2_free(&(*array2b)->blocks);
-	// free pointer to UArray2
-	// FREE((*array2b)->blocks);
 	// free 2d blocked array
 	FREE(*array2b);
 }
