@@ -49,8 +49,8 @@ T UArray2b_new (int width, int height, int size, int blocksize) {
 	
 	// each location in the 2d array of blocks holds a pointer to a
 	// 1d array that holds the values stored within the overall structure
-	for (int i=0; i<blocks_h; i++) {
-		for (int j=0; j<blocks_w; j++) {
+	for (int i=0; i<blocks_w; i++) {
+		for (int j=0; j<blocks_h; j++) {
 			Array_T *block;
 			NEW(block);
 			*block = Array_new((blocksize * blocksize), size);
@@ -89,14 +89,14 @@ void UArray2b_free (T *array2b) {
 	FREE(*array2b);
 }
 
-int UArray2b_width (T array2b) {
-	assert(array2b);
-	return array2b->width;
-}
-
 int UArray2b_height (T array2b) {
 	assert(array2b);
 	return array2b->height;
+}
+
+int UArray2b_width (T array2b) {
+	assert(array2b);
+	return array2b->width;
 }
 
 int UArray2b_size (T array2b) {
@@ -109,9 +109,11 @@ int UArray2b_blocksize (T array2b) {
 	return array2b->blocksize;
 }
 
+// returns a pointer to the cell in column i, row j
+// idx out of range is a checked run-time error
 void *UArray2b_at (T array2b, int i, int j) {
 	// assert that i and j are within bounds
-	assert(i<(array2b->height) && j<(array2b->width));
+	assert(j<(array2b->height) && i<(array2b->width));
 	
 	// store blocksize
 	int blocksize = array2b->blocksize;
@@ -131,7 +133,7 @@ void *UArray2b_at (T array2b, int i, int j) {
 	Array_T **block_ptr_loc = (Array_T **)UArray2_at(array2b->blocks, block_i, block_j);
 	Array_T *block = *block_ptr_loc;
 	// return the memory location of the element inthe block array
-	return Array_get(*block, ((inner_i * blocksize) + inner_j));
+	return Array_get(*block, ((inner_j * blocksize) + inner_i));
 }
 
 void UArray2b_map (T array2b, void apply(int i, int j, T array2b, void *elem, void *cl), void *cl) {
