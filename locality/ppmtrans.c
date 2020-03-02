@@ -37,8 +37,8 @@ void apply_trans(int i, int j, A2Methods_Array2 original, void *elem, void *cl) 
 	int new_height, new_width;
 	new_height = methods->height(*rotated);
 	new_width = methods->width(*rotated);
-	// printf("new_height: %d\tnew_width: %d\n", new_height, new_width);
 	
+	// printf("new_height: %d\tnew_width: %d\n", new_height, new_width);
 	// printf("i: %d\tj: %d\t", i, j);
 	
 	// calculate new i and j based on rotation
@@ -117,6 +117,8 @@ void transform_ppm(FILE *stream, A2Methods_T methods, int rotation, A2Methods_ma
 	Pnm_ppmwrite(stdout, *ppm);
 	
 	// free ppm and pointer
+	// methods->free(rotated);
+	// FREE(rotated);
 	Pnm_ppmfree(ppm);
 	FREE(ppm);
 

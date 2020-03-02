@@ -25,10 +25,10 @@ int main(int argc, char *argv[]) {
 	printf("blocksize  :\t%d\n", methods->blocksize(array2b));
 	
 	int *p;
-	for (int i=0; i<10; i++) {
-		for (int j=0; j<10; j++) {
+	for (int j=0; j<10; j++) {
+		for (int i=0; i<10; i++) {
 			p = methods->at(array2b, i, j);
-			*p = (i * 10) + j;
+			*p = (j * 10) + i;
 	 	}
 	}
 	
