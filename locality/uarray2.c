@@ -87,9 +87,9 @@ void UArray2_map_row_major(T uarray2, void apply(int i, int j, T uarray2, void *
 	int size = uarray2->size;
 	Array_T *arr = &(uarray2->array);
 
-	for (int i=0; i<height; i++) {
-		for (int j=0; j<width; j++) {
- 			n = (void *)((*arr)->array + (i * size * width) + (j * size));
+	for (int j=0; j<height; j++) {
+		for (int i=0; i<width; i++) {
+ 			n = (void *)((*arr)->array + (j * size * width) + (i * size));
  			apply(i, j, uarray2, n, cl);
 		}
 	}

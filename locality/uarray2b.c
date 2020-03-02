@@ -158,9 +158,9 @@ void UArray2b_map (T array2b, void apply(int i, int j, T array2b, void *elem, vo
 					// if the element contains valid data
 					if (k < h_max && l < w_max) {
 						// set pointer
-						p = UArray2b_at(array2b, k, l);
+						p = UArray2b_at(array2b, l, k);
 						// call apply function
-						apply(k, l, array2b, p, cl);
+						apply(l, k, array2b, p, cl);
 					}
 				}
 			}
