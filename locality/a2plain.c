@@ -35,9 +35,9 @@ static void map_row_major (A2 array2, A2Methods_applyfun apply, void *cl) {
 	UArray2_map_row_major(array2, (applyfun*)apply, cl);
 }
 
-static void map_col_major (A2 array2, A2Methods_applyfun apply, void *cl) {
-	UArray2_map_col_major(array2, (applyfun*)apply, cl);
-}
+// static void map_col_major (A2 array2, A2Methods_applyfun apply, void *cl) {
+// 	UArray2_map_col_major(array2, (applyfun*)apply, cl);
+// }
 
 static struct A2Methods_T array2_methods_plain_struct = {
 	new,
@@ -49,7 +49,7 @@ static struct A2Methods_T array2_methods_plain_struct = {
 	blocksize,
 	at,
 	map_row_major,
-	map_col_major,
+	NULL,	// map_col_major,
 	NULL,
 	map_row_major,
 };
