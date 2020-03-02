@@ -8,31 +8,6 @@
 #include "a2blocked.h"
 #include "pnm.h"
 
-//Gets each value in the image, checks that it is in the valid range, and
-//inserts it into the 2d array
-void getVal(void* value, void* cl){
-
-        Pnmrdr_T* data = (Pnmrdr_T*) cl;
-        int n = (int) Pnmrdr_get(*data);
-        //n is unsigned so the only possible invalid numbers are 0 or n>9
-        //since any negative number will be translated to a positive in unsigned
-        assert(n && n < 10);
-        *((int*) value) = n;
-
-}
-
-
-/* TODO: Change to use A2 abstract type
- *       Row-Major should be usable for obtaining image data
- *       based on pnmrdr output
- */
-void buildBoard(UArray2_T board, Pnmrdr_T data){
-
-        UArray2_map_row_major(board,
-                getVal,
-                (void*) &data);
-}
-
 int main(int argc, char *argv[]) {
   int rotation = 0;
   A2Methods_T methods = array2_methods_plain; // default to UArray2 methods
@@ -77,5 +52,3 @@ int main(int argc, char *argv[]) {
   }
    assert(0); // the rest of this function is not yet implemented
 }
-
-
