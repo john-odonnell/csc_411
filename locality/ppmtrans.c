@@ -96,7 +96,11 @@ void transform_ppm(FILE *stream, A2Methods_T methods, int rotation, A2Methods_ma
 	// set up rotated array2 of opposite height/width
 	A2Methods_Array2 *rotated;
 	NEW(rotated);
-	*rotated = methods->new(height, width, size);
+	if (rotation==90) {
+		*rotated = methods->new(height, width, size);
+	} else {
+		*rotated = methods->new(width, height, size);
+	}
 
 	// printf("rotated ---\n");
 	// printf("width :\t%d\n", methods->width(*rotated));
@@ -109,16 +113,24 @@ void transform_ppm(FILE *stream, A2Methods_T methods, int rotation, A2Methods_ma
 	}
 	
 	// change the struct members to the new rotated values
-	(*ppm)->width = height;
-	(*ppm)->height = width;
-	(*ppm)->pixels = *rotated;
+	if (rotation == 90) {
+		(*ppm)->width = height;
+		(*ppm)->height = width;
+		(*ppm)->pixels = *rotated;
+	} else if (rotation == 180) {
+		(*ppm)->pixels = *rotated;
+	}
 	
 	// write ppm to standard output
 	Pnm_ppmwrite(stdout, *ppm);
 	
 	// free ppm and pointer
-	// methods->free(rotated);
-	// FREE(rotated);
+	if (rotation == 0) {
+		methods->free(rotated);
+	} else {
+		methods->free(&pixels);
+	}
+	FREE(rotated);
 	Pnm_ppmfree(ppm);
 	FREE(ppm);
 
