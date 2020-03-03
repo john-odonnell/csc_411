@@ -35,12 +35,12 @@ done
 ########### the middle part is different for each assignment
 # link together .o files + libraries to make executable binaries
 # using one case statement per executable binary
-# case $link in
-#   all|a2test) gcc $FLAGS $LFLAGS -o a2test a2test.o \
-#                   uarray2b.o uarray2.o a2plain.o a2blocked.o \
-#                   $LIBS 
-#               linked=yes ;;
-# esac
+case $link in
+  all|a2test) gcc $FLAGS $LFLAGS -o a2test a2test.o \
+                  uarray2b.o uarray2.o a2plain.o a2blocked.o \
+                  $LIBS 
+              linked=yes ;;
+esac
 
 case $link in
   all|ppmtrans) gcc $FLAGS $LFLAGS -o ppmtrans ppmtrans.o \
