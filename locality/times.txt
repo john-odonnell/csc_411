@@ -1,3 +1,8 @@
 Transforming Howth.ppm
 
 
+~~~270 deg rotation with -block-major~~~
+time in seconds: 20
+clock cycles   : 19843347
+
+

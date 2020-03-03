@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include "assert.h"
 #include "a2methods.h"
@@ -69,13 +70,14 @@ void rotate(A2Methods_Array2 *rotated, A2Methods_Array2 *original, A2Methods_T m
 	return;	
 }
 
-void transform_ppm(FILE *stream, A2Methods_T methods, int rotation, A2Methods_mapfun map){
+void transform_ppm(FILE *stream, A2Methods_T methods, int rotation, A2Methods_mapfun map, char mapping[]){
 	(void) map;
 	
 	// new ppm, read from input stream
 	Pnm_ppm *ppm;
 	NEW(ppm);
 	*ppm = Pnm_ppmread(stream, methods);
+	fclose(stream);
 	
 	// pull stuct members from ppm to define rotated pppm
 	int width = (*ppm)->width;
@@ -93,11 +95,28 @@ void transform_ppm(FILE *stream, A2Methods_T methods, int rotation, A2Methods_ma
 	} else {
 		*rotated = methods->new(width, height, size);
 	}
+	
+	time_t start, end;
+	clock_t cpu_start, cpu_end;
 
 	// if the image is to be rotated, rotate it
 	if (rotation != 0) {
+		start = time(NULL);
+		cpu_start = clock();
 		rotate(rotated, &pixels, methods, rotation);
+		cpu_end = clock();
+		end = time(NULL);
 	}
+
+	time_t elapsed = end - start;
+	clock_t cpu_cycles = cpu_end - cpu_start;
+
+	FILE *times = fopen("times.txt","a");
+	fprintf(times, "~~~%d deg rotation with %s~~~\n", rotation, mapping); 
+	fprintf(times, "time in seconds: %ld\n", elapsed);
+	fprintf(times, "clock cycles   : %ld\n", cpu_cycles);
+	fprintf(times, "\n\n");
+	fclose(times);
 	
 	// change the struct members to the new rotated values
 	if (rotation == 90 || rotation == 270) {
@@ -192,7 +211,7 @@ int main(int argc, char *argv[]) {
   	  	}
   	}
 	
-	transform_ppm(stream, methods, rotation, map);
+	transform_ppm(stream, methods, rotation, map, mapping);
 }
 
 #undef A2Arr
