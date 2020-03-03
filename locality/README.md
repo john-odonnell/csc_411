@@ -5,12 +5,12 @@
 
 #### UArray2 has been implemented
 ##### Design Checklist:
-1) What is the abstract thing you are trying to represent?
+* Q1: What is the abstract thing you are trying to represent?
 	* The UArray2b interface represents a set of i rows and j columns that make
 	up any two dimensional array where the array is sectioned into n x n blocks
 	of elements based on the specified blocksize or alternatively the size of
 	the data structure representing an element.
-2) What functions will you offer, and what are the contracts of those functions?
+* Q2: What functions will you offer, and what are the contracts of those functions?
 	
 	The UArray2 interface offers eight functions:
 	
@@ -33,7 +33,7 @@
 		index in a given UArray2b
 	* UArray2b_map, which applies a given function to every entry in a given 
 		UArray2b on a block by block basis in row major order
-4) What representation will you use, and what invariants will it satisfy?
+* Q4: What representation will you use, and what invariants will it satisfy?
 	* The UArray2b_T struct will contain private members height, width, size, and
 	blocksize, along with a pointers to a UArray2 containing a pointer for each
 	block with each block being a Hanson Array. These data members are 
@@ -46,16 +46,16 @@
 
 #### ppmtrans has been implemented
 ##### Design Checklist:
-1) What is the abstract thing you are trying to represent?
+* Q1: What is the abstract thing you are trying to represent?
 	* This part of the assignment regards implementing ppmtrans, which performs 
 	simple image transformations such as image rotations at 90 degree 
 	increments, vertical and horizontal flips, and transpositions. All of 
 	these transformations have to be capable of using row-major, column-major 
 	and block-major mapping strategies.
-2) What functions will you offer, and what are the contracts of those functions?
+* Q2: What functions will you offer, and what are the contracts of those functions?
 	* This program will take as input a single ppm image from either standard 
 	input or a file name provided through the command line.
-4) What representation will you use, and what invariants will it satisfy?
+* Q4: What representation will you use, and what invariants will it satisfy?
 	
 	Take data from a ppm file and store it in a new UArray2b_T or UArray2_T, 
 	depending on the desired method of transformation.
