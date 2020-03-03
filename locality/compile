@@ -49,10 +49,10 @@ case $link in
 	      linked=yes ;;
 esac
 
-case $link in
-  all|test) gcc $FLAGS $LFLAGS -o test test.o uarray2b.o uarray2.o a2plain.o a2blocked.o $LIBS
-	  	  linked=yes ;;
-esac
+# case $link in
+#   all|test) gcc $FLAGS $LFLAGS -o test test.o uarray2b.o uarray2.o a2plain.o a2blocked.o $LIBS
+# 	  	  linked=yes ;;
+# esac
 
 # error if asked to link something we didn't recognize
 if [ $linked = no ]; then

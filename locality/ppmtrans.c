@@ -134,10 +134,10 @@ int main(int argc, char *argv[]) {
   
   	A2Methods_mapfun *map = methods->map_default; // default to best map
   	assert(map);
-  	
+
   	FILE *stream;
-  	if (argc == 3){
-		stream = fopen(argv[3],"r");
+  	if (argc == 5) {
+		stream = fopen(argv[4],"r");
   	} else {
   	        stream = stdin;
   	}
