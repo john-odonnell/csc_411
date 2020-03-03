@@ -38,9 +38,6 @@ void apply_trans(int i, int j, A2Methods_Array2 original, void *elem, void *cl) 
 	new_height = methods->height(*rotated);
 	new_width = methods->width(*rotated);
 	
-	// printf("new_height: %d\tnew_width: %d\n", new_height, new_width);
-	// printf("i: %d\tj: %d\t", i, j);
-	
 	// calculate new i and j based on rotation
 	int new_i, new_j;
 	if (rotation==90) {
@@ -49,10 +46,11 @@ void apply_trans(int i, int j, A2Methods_Array2 original, void *elem, void *cl) 
 	} else if (rotation==180) {
 		new_i = new_width-i-1;
 		new_j = new_height-j-1;
+	} else if (rotation==270) {
+		new_i = j;
+		new_j = new_height-i-1;
 	}
 
-	// printf("n_i: %d\tn_j: %d\n", new_i, new_j);
-	
 	// create pointer to the correct location in the rotated array
 	struct Pnm_rgb *new = (struct Pnm_rgb *)methods->at(*rotated, new_i, new_j);
 
@@ -86,34 +84,23 @@ void transform_ppm(FILE *stream, A2Methods_T methods, int rotation, A2Methods_ma
 	(void) denominator;
 	A2Methods_Array2 pixels = (*ppm)->pixels;
 	int size = methods->size(pixels);
-
-	// printf("original ---\n");
-	// printf("width :\t%d\n", width);
-	// printf("height:\t%d\n", height);
-	// printf("denom :\t%d\n", denominator);
-	// printf("size  :\t%d\n", size);
 	
 	// set up rotated array2 of opposite height/width
 	A2Methods_Array2 *rotated;
 	NEW(rotated);
-	if (rotation==90) {
+	if (rotation==90 || rotation==270) {
 		*rotated = methods->new(height, width, size);
 	} else {
 		*rotated = methods->new(width, height, size);
 	}
 
-	// printf("rotated ---\n");
-	// printf("width :\t%d\n", methods->width(*rotated));
-	// printf("height:\t%d\n", methods->height(*rotated));
-	// printf("size  :\t%d\n", methods->size(*rotated));
-	
 	// if the image is to be rotated, rotate it
 	if (rotation != 0) {
 		rotate(rotated, &pixels, methods, rotation);
 	}
 	
 	// change the struct members to the new rotated values
-	if (rotation == 90) {
+	if (rotation == 90 || rotation == 270) {
 		(*ppm)->width = height;
 		(*ppm)->height = width;
 		(*ppm)->pixels = *rotated;
@@ -142,64 +129,69 @@ int main(int argc, char *argv[]) {
 	int rotation = 0;
   	char mapping[13];
 
-  A2Methods_T methods = array2_methods_plain; // default to UArray2 methods
-  assert(methods);
+  	A2Methods_T methods = array2_methods_plain; // default to UArray2 methods
+  	assert(methods);
   
-  A2Methods_mapfun *map = methods->map_default; // default to best map
-  assert(map);
-  
-  FILE *stream;
-  if (argc == 3){
-	  stream = fopen(argv[3],"r");
-  } else {
-	  stream = stdin;
-  }
+  	A2Methods_mapfun *map = methods->map_default; // default to best map
+  	assert(map);
+  	
+  	FILE *stream;
+  	if (argc == 3){
+		stream = fopen(argv[3],"r");
+  	} else {
+  	        stream = stdin;
+  	}
 
-  if (stream==NULL) {
-	  fprintf(stderr, "%s: Could not open file %s.\n", argv[0], argv[3]);
-  }
+  	if (stream==NULL) {
+  	        fprintf(stderr, "%s: Could not open file %s.\n", argv[0], argv[3]);
+  	}
 
-  #define SET_METHODS(METHODS, MAP, WHAT) do { \
-      methods = (METHODS); \
-      assert(methods); \
-      map = methods->MAP; \
-      if (!map) { \
-        fprintf(stderr, "%s does not support " WHAT "mapping\n", argv[0]); \
-        exit(1); \
-      } \
-  } while(0)
+  	#define SET_METHODS(METHODS, MAP, WHAT) do { \
+  	    	methods = (METHODS); \
+  	    	assert(methods); \
+  	    	map = methods->MAP; \
+  	    	if (!map) { \
+  	      		fprintf(stderr, "%s does not support " WHAT "mapping\n", argv[0]); \
+  	      		exit(1); \
+  	    	} \
+  	} while(0)
 
-  int i;
-  for (i = 1; i < argc; i++) {
-    if (!strcmp(argv[i], "-row-major")) {
-      SET_METHODS(array2_methods_plain, map_row_major, "row-major");
-      strcpy(mapping, "-row-major");
-    } else if (!strcmp(argv[i], "-col-major")) {
-      SET_METHODS(array2_methods_plain, map_col_major, "column-major");
-      strcpy(mapping, "-col-major");
-    } else if (!strcmp(argv[i], "-block-major")) {
-      SET_METHODS(array2_methods_blocked, map_block_major, "block-major");
-      strcpy(mapping, "-block-major");
-    } else if (!strcmp(argv[i], "-rotate")) {
-      assert(i + 1 < argc);
-      char *endptr;
-      rotation = strtol(argv[++i], &endptr, 10);
-      assert(*endptr == '\0'); // parsed all correctly
-      assert(rotation == 0   || rotation == 90
-          || rotation == 180 || rotation == 270);
-    } else if (*argv[i] == '-') {
-      fprintf(stderr, "%s: unknown option '%s'\n", argv[0], argv[i]);
-      exit(1);
-    } else if (argc - i > 2) {
-      fprintf(stderr, "Usage: %s [-rotate <angle>] "
-              "[-{row,col,block}-major] [filename]\n", argv[0]);
-      exit(1);
-    } else {
-      break;
-    }
-  }
-	// printf("mapping method:\t%s\n", mapping);
-	// printf("rotation      :\t%d\n", rotation);
+  	int i;
+  	for (i = 1; i < argc; i++) {
+  	  	if (!strcmp(argv[i], "-row-major")) {
+  	    		SET_METHODS(array2_methods_plain, map_row_major, "row-major");
+  	    		strcpy(mapping, "-row-major");
+  	  	} else if (!strcmp(argv[i], "-col-major")) {
+  	    		SET_METHODS(array2_methods_plain, map_col_major, "column-major");
+  	    		strcpy(mapping, "-col-major");
+  	  	} else if (!strcmp(argv[i], "-block-major")) {
+  	    		SET_METHODS(array2_methods_blocked, map_block_major, "block-major");
+  	    		strcpy(mapping, "-block-major");
+  	  	} else if (!strcmp(argv[i], "-rotate")) {
+  	    		assert(i + 1 < argc);
+  	    		char *endptr;
+  	    		rotation = strtol(argv[++i], &endptr, 10);
+  	    		assert(*endptr == '\0'); // parsed all correctly
+  	    		assert(rotation == 0   || rotation == 90
+  	        		|| rotation == 180 || rotation == 270);
+  	  	} else if (!strcmp(argv[i], "-flip")) {
+  	      		fprintf(stderr, "%s: '%s' not implemented\n", argv[0], argv[i]);
+  	      		exit(1);
+  	  	} else if (!strcmp(argv[i], "-transpose")) {
+  	          	fprintf(stderr, "%s: '%s' not implemented\n", argv[0], argv[i]);
+  	          	exit(1);
+  	  	} else if (*argv[i] == '-') {
+  	    		fprintf(stderr, "%s: unknown option '%s'\n", argv[0], argv[i]);
+  	    		exit(1);
+  	  	} else if (argc - i > 2) {
+  	    		fprintf(stderr, "Usage: %s [-rotate <angle>] "
+  	            		"[-{row,col,block}-major] [filename]\n", argv[0]);
+  	    		exit(1);
+  	  	} else {
+  	    		break;
+  	  	}
+  	}
+	
 	transform_ppm(stream, methods, rotation, map);
 }
 
