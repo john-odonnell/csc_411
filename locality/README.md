@@ -86,4 +86,56 @@
 	* The data will be pulled from the array either iteratively or using a 
 		row-major mapping function.
 
+## Part E: Runtime Analysis
+
+For this portion of the assignment we were tasked with comparing the runtime of 
+the different mapping methods of the 2D arrays on large images to determine if
+the use of the blocked 2d array along with the blocked mapping function could 
+produce a significant reduction in number of cache misses and likewise a 
+sizeable speedup for performing transpose operations on images whose size meant 
+that the entire image could not fit into cache. The commands we ran to test this 
+were as follows, with trrhe first command constituting a large image and the 
+second being an extremely large image created by using `pnmscale`.
+
+##### First Command Run:
+```
+/usr/bin/time ./ppmtrans -rotate [angle] -[mapping] /csc/411/images/large/oberon.ppm
+ ```
+ 
+ Image Transpose| row-major | col-major | block-major
+------------ | ------------- | ------------- | -------------
+180 degree | 0.68 s | 0.68 s | 1.52 s
+90 degree | 0.90 s | 0.91 s | 1.54 s 
+
+##### Second Command Run:
+```
+djpeg /csc/411/images/large/winter.jpg | pnmscale 3.5 | /usr/bin/time ./ppmtrans -rotate [angle] -[mapping] 
+ ```
+ 
+ Image Transpose| row-major | col-major | block-major
+------------ | ------------- | ------------- | -------------
+180 degree | 13.20 s | 13.24 s | 29.44 s
+90 degree | 17.74 s | 17.89 s | 29.58 s 
+
+##### Our Expectations Coming into the Assignment:
+###### Obtained from our Estimates Document
+> Ranking of Expected Performance
+
+Image Transpose| row-major | col-major | block-major
+------------ | ------------- | ------------- | -------------
+180 degree | 2 | 3 | 1
+90 degree | 2 | 3 | 1 
+
+The results of the testing performed did not match with our predictions from our
+estimates document, as the blocked 2d array and block-major mapping of our 2d 
+transformation functions performed worse than the other two mappiong methods in
+both large and extremely large images. It was expected that block-major mapping 
+would be able to perform better than row or column major in both cases, and 
+especially in the case of an extremely large image because it would result in 
+less cache misses which would require retrieving data from either slower cache
+or memory. We predicted that this would be the case regardless of what transpose
+was being performed. However, the results say otherwise, which means that there 
+are likely large slowdowns present in our code which prevents the block-major 
+mapping from being as effecient as it can be.
+
 ###### 16 manhours spent on Assignment 3: locality
