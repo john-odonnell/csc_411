@@ -4,7 +4,8 @@
 #include "assert.h"
 #include "compress.h"
 
-static void (*compress_or_decompress)(FILE *input) = compress;
+// static void (*compress_or_decompress)(FILE *input) = compress;
+static void (*compress_or_decompress)(FILE *input);
 
 int main(int argc, char *argv[]) {
   int i;
@@ -12,7 +13,7 @@ int main(int argc, char *argv[]) {
     if (!strcmp(argv[i], "-c")) {
       compress_or_decompress = compress;
     } else if (!strcmp(argv[i], "-d")) {
-      compress_or_decompress = decompress;
+      // compress_or_decompress = decompress;
     } else if (*argv[i] == '-') {
       fprintf(stderr, "%s: unknown option '%s'\n", argv[0], argv[i]);
       exit(1);
