@@ -9,6 +9,7 @@
 #include "trim_image.h"
 #include "float_convert.h"
 #include "colorspace_trans.h"
+#include "to_averages.h"
 
 void compress(FILE *input) {
 	// establish methods
@@ -53,11 +54,19 @@ void compress(FILE *input) {
 	altered = to_float(image, new_width, new_height, denom);
 	//
 	//
-	
-	
+
+
 	//
 	// convert to component video
 	to_colorspace(altered, new_width, new_height);
+	//
+	//
+
+
+	//
+	// compute averages
+	A2Methods_Array2 *averages;
+	averages = get_averages(altered, new_width, new_height);
 	//
 	//
 
@@ -69,6 +78,9 @@ void compress(FILE *input) {
 	// free 2d array and pointer
 	methods->free(altered);
 	FREE(altered);
+
+	methods->free(averages);
+	FREE(averages);
 
 	return;
 }
