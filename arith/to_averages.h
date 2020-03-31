@@ -6,8 +6,9 @@
 #define TO_AVERAGES_INCLUDED
 
 typedef struct block_components {
-	float     a,     b,  c,  d;
-	float avgPb, avgPr;
+	unsigned  a;
+	signed    b,  c,  d;
+	unsigned avgPb, avgPr;
 } *block_components;
 
 extern A2Methods_Array2 *get_averages(A2Methods_Array2 *arr, int width, int height);

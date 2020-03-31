@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <math.h>
 
 #include "a2methods.h"
 #include "a2plain.h"
@@ -6,6 +7,7 @@
 #include "mem.h"
 #include "to_averages.h"
 #include "colorspace_trans.h"
+#include "arith411.h"
 
 float maintain_range(float x) {
 	if (x < -0.3) {
@@ -65,8 +67,8 @@ A2Methods_Array2 *get_averages(A2Methods_Array2 *arr, int width, int height) {
 			}
 			
 			this_block = methods->at(*blocks, b_i/2, b_j/2);
-			this_block->avgPb = totPb/4.0;
-			this_block->avgPr = totPr/4.0;
+			this_block->avgPb = Arith_index_of_chroma(totPb/4.0);
+			this_block->avgPr = Arith_index_of_chroma(totPr/4.0);
 
 			a = (Y4 + Y3 + Y2 + Y1)/4.0;
 			b = (Y4 + Y3 - Y2 - Y1)/4.0;
@@ -77,10 +79,10 @@ A2Methods_Array2 *get_averages(A2Methods_Array2 *arr, int width, int height) {
 			c = maintain_range(c);
 			d = maintain_range(d);
 
-			this_block->a = a;
-			this_block->b = b;
-			this_block->c = c;
-			this_block->d = d;
+			this_block->a = (unsigned)(roundf(a * 511));
+			this_block->b =   (signed)(roundf(b *  50));
+			this_block->c =   (signed)(roundf(c *  50));
+			this_block->d =   (signed)(roundf(d *  50));
 		}
 	}
 

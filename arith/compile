@@ -14,7 +14,7 @@ CC=gcc
 
 # compile and link against course software and netpbm library
 CFLAGS="-I. -I/usr/local/cii/include -I/usr/local/include -I/csc/411/include"
-LIBS="-lc -lcii -llocality -lnetpbm -lm"
+LIBS="-lc -lcii -llocality -lnetpbm -larith411 -lm"
 LFLAGS="-L/usr/local/cii/lib -L/usr/local/lib -L/csc/411/lib"
 
 # these flags max out warnings and debug info
@@ -38,9 +38,16 @@ done
 case $link in
   all|image) gcc $FLAGS $LFLAGS -o image image.o \
 	  	  uarray2.o a2plain.o compress.o trim_image.o float_convert.o \
-		  colorspace_trans.o to_averages.o \
-		  -llocality -lnetpbm $LIBS 
+		  colorspace_trans.o to_averages.o pack.o bitpack.o output_compressed.o \
+		  -llocality -lnetpbm -larith411 $LIBS 
               linked=yes ;;
+esac
+
+case $link in
+  all|ppmdiff) gcc $FLAGS $LFLAGS -o ppmdiff ppmdiff.o \
+	  	 uarray2.o a2plain.o \
+		 -llocality -lnetpbm $LIBS
+  	      linked=yes ;;
 esac
 
 # error if asked to link something we didn't recognize
