@@ -6,16 +6,16 @@
 #include "uarray2.h"
 #include "bitpack.h"
 
-void output(A2Methods_Array2 *arr) {
+void output(A2Methods_Array2 *arr, unsigned width, unsigned height) {
 	A2Methods_T methods = array2_methods_plain;
 
-	int width = methods->width(*arr);
-	int height = methods->height(*arr);
+	int comp_width = methods->width(*arr);
+	int comp_height = methods->height(*arr);
 	
 	printf("Compressed image format 2\n%u %u", width, height);
 	printf("\n");
-	for (int j = 0; j < height; j++) {
-		for (int i = 0; i < width; i++) {
+	for (int j = 0; j < comp_height; j++) {
+		for (int i = 0; i < comp_width; i++) {
 			// printf("%d,%d\n", i, j);
 			
 			uint64_t codeword = *(uint64_t *)methods->at(*arr, i, j);

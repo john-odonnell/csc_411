@@ -11,6 +11,7 @@ typedef struct block_components {
 	unsigned avgPb, avgPr;
 } *block_components;
 
-extern A2Methods_Array2 *get_averages(A2Methods_Array2 *arr, int width, int height);
+extern A2Methods_Array2 *get_averages(A2Methods_Array2 *arr, unsigned width, unsigned height);
+extern A2Methods_Array2 *decompose_averages(A2Methods_T methods, A2Methods_Array2 *averages, unsigned width, unsigned height);
 
 #endif

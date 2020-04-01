@@ -39,6 +39,7 @@ case $link in
   all|image) gcc $FLAGS $LFLAGS -o image image.o \
 	  	  uarray2.o a2plain.o compress.o trim_image.o float_convert.o \
 		  colorspace_trans.o to_averages.o pack.o bitpack.o output_compressed.o \
+		  input_compressed.o \
 		  -llocality -lnetpbm -larith411 $LIBS 
               linked=yes ;;
 esac

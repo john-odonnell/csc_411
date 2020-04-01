@@ -24,12 +24,18 @@ uint64_t shr(uint64_t word, unsigned bits) {
 	}
 }
 
-uint64_t sra(uint64_t word, unsigned bits) {
-	if (bits == 64) {
-		bits = 63;
+int64_t sra(int64_t word, unsigned bits) {
+	assert(bits <= 64);
+	
+	if (bits <= 63) {
+		word = (word >> bits);
+	} else if (word >= 0) {
+		word = 0;
+	} else {
+		word = ~0;
 	}
 
-	return (uint64_t)word>>bits;
+	return word;
 }
 
 bool Bitpack_fitsu(uint64_t n, unsigned width) {
@@ -84,7 +90,7 @@ int64_t Bitpack_gets(uint64_t word, unsigned width, unsigned lsb) {
 	word = shl(word, (64-width-lsb));
 	word = sra(word, (64-width));
 
-	return word;
+	return (uint64_t)word;
 }
 
 uint64_t Bitpack_newu(uint64_t word, unsigned width, unsigned lsb, uint64_t value) {

@@ -1,10 +1,14 @@
+#include <stdio.h>
+
 #include "a2methods.h"
 #include "a2plain.h"
 #include "uarray2.h"
+#include "mem.h"
+
 #include "float_convert.h"
 #include "colorspace_trans.h"
 
-void to_colorspace(A2Methods_Array2 *arr, int width, int height) {
+void to_colorspace(A2Methods_Array2 *arr, unsigned width, unsigned height) {
 	// set methods
 	A2Methods_T methods = array2_methods_plain;
 	
@@ -17,8 +21,8 @@ void to_colorspace(A2Methods_Array2 *arr, int width, int height) {
 	Pnm_colorspace destination;
 
 	// for each rgb float set in the array
-	for (int j = 0; j < height; j++) {
-		for (int i = 0; i < width; i++) {
+	for (int j = 0; j < (int)height; j++) {
+		for (int i = 0; i < (int)width; i++) {
 			// pull memory location of pixel
 			this_pix_f = methods->at(*arr, i, j);
 
@@ -41,4 +45,46 @@ void to_colorspace(A2Methods_Array2 *arr, int width, int height) {
 	}
 
 	return;
+}
+
+A2Methods_Array2 *from_colorspace(A2Methods_T methods, A2Methods_Array2 *colorspace, unsigned width, unsigned height) {
+	float red, green, blue;
+	float   Y,    Pb,   Pr;
+
+	Pnm_colorspace this_pix;
+	Pnm_rgb_float destination;
+
+	A2Methods_Array2 *floats;
+	NEW(floats);
+	*floats = methods->new((int)width, (int)height, sizeof(struct Pnm_rgb_float));
+
+	for (int j = 0; j < (int)height; j++) {
+		for (int i = 0; i < (int)width; i++) {
+			this_pix = methods->at(*colorspace, i, j);
+
+			Y  = this_pix->Y;
+			Pb = this_pix->Pb;
+			Pr = this_pix->Pr;
+
+			red   = (1.0 * Y) +      (0.0 * Pb) +    (1.402 * Pr);
+			green = (1.0 * Y) - (0.344136 * Pb) - (0.714136 * Pr);
+			blue  = (1.0 * Y) +    (1.772 * Pb) +      (0.0 * Pr);
+
+			destination = methods->at(*floats, i, j);
+			destination->red   = red;
+			destination->green = green;
+			destination->blue  = blue;
+
+
+/*			printf("%d,%d\n", i, j);
+			printf("\tY :%f\n",   Y);
+			printf("\tPb:%f\n",  Pb);
+			printf("\tPr:%f\n",  Pr);
+			printf("\t r:%f\n", red);
+			printf("\t g:%f\n", green);
+			printf("\t b:%f\n", blue);
+*/		}
+	}
+
+	return floats;
 }

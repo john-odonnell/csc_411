@@ -8,6 +8,7 @@
 #include "to_averages.h"
 #include "colorspace_trans.h"
 #include "arith411.h"
+#include "float_convert.h"
 
 float maintain_range(float x) {
 	if (x < -0.3) {
@@ -19,14 +20,14 @@ float maintain_range(float x) {
 	}
 }
 
-A2Methods_Array2 *get_averages(A2Methods_Array2 *arr, int width, int height) {
+A2Methods_Array2 *get_averages(A2Methods_Array2 *arr, unsigned width, unsigned height) {
 	// set methods
 	A2Methods_T methods = array2_methods_plain;
 	
 	// initialize array of 2x2 blocks
 	A2Methods_Array2 *blocks;
        	NEW(blocks);
-	*blocks	= methods->new(width/2, height/2, sizeof(struct block_components));
+	*blocks	= methods->new((int)width/2, (int)height/2, sizeof(struct block_components));
 	
 	// initialize lum values and
 	// Pnm_colorspace pointer
@@ -41,8 +42,8 @@ A2Methods_Array2 *get_averages(A2Methods_Array2 *arr, int width, int height) {
 	block_components this_block;
 
 	// for each block
-	for (int b_i = 0; b_i < width; b_i+=2) {
-		for (int b_j = 0; b_j < height; b_j+=2) {
+	for (int b_i = 0; b_i < (int)width; b_i+=2) {
+		for (int b_j = 0; b_j < (int)height; b_j+=2) {
 			// for each cell in the block
 			for (int i = b_i; i < b_i+2; i++) {
 				for (int j = b_j; j < b_j+2; j++) {
@@ -87,4 +88,60 @@ A2Methods_Array2 *get_averages(A2Methods_Array2 *arr, int width, int height) {
 	}
 
 	return blocks;
+}
+
+A2Methods_Array2 *decompose_averages(A2Methods_T methods, A2Methods_Array2 *averages, unsigned width, unsigned height) {
+	A2Methods_Array2 *floats;
+	NEW(floats);
+	*floats = methods->new(width, height, sizeof(struct Pnm_rgb_float));
+
+	float     a,     b,  c,  d;
+	float    Y1,    Y2, Y3, Y4;
+	float avgPb, avgPr;
+	Pnm_colorspace this_pix;
+	block_components this_block;
+
+
+	for (int b_i = 0; b_i < (int)width/2; b_i++) {
+		for (int b_j = 0; b_j < (int)height/2; b_j++) {
+			this_block = methods->at(*averages, b_i, b_j);
+
+			a = (float)(this_block->a)/511.0;
+			b = (float)(this_block->b)/ 50.0;
+			c = (float)(this_block->c)/ 50.0;
+			d = (float)(this_block->d)/ 50.0;
+
+			avgPb = Arith_chroma_of_index(this_block->avgPb);
+			avgPr = Arith_chroma_of_index(this_block->avgPr);
+
+			Y1 = a - b - c + d;
+			Y2 = a - b + c - d;
+			Y3 = a + b - c - d;
+			Y4 = a + b + c + d;
+
+			for (int inner_i = 0; inner_i < 2; inner_i++) {
+				for (int inner_j = 0; inner_j < 2; inner_j++) {
+					int i = (2 * b_i) + inner_i;
+					int j = (2 * b_j) + inner_j;
+
+					this_pix = methods->at(*floats, i, j);
+
+					this_pix->Pb = avgPb;
+					this_pix->Pr = avgPr;
+
+					if (inner_i == 0 && inner_j == 0) {
+						this_pix->Y = Y1;
+					} else if (inner_i == 1 && inner_j == 0) {
+						this_pix->Y = Y2;
+					} else if (inner_i == 0 && inner_j == 1) {
+						this_pix->Y = Y3;
+					} else {
+						this_pix->Y = Y4;
+					}
+				}
+			}
+		}
+	}
+
+	return floats;
 }

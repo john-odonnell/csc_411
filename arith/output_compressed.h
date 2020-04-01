@@ -5,6 +5,6 @@
 #include "a2plain.h"
 #include "uarray2.h"
 
-extern void output(A2Methods_Array2 *arr);
+extern void output(A2Methods_Array2 *arr, unsigned width, unsigned height);
 
 #endif

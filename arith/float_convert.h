@@ -10,6 +10,7 @@ typedef struct Pnm_rgb_float {
 	float red, green, blue;
 } *Pnm_rgb_float;
 
-extern A2Methods_Array2 *to_float(Pnm_ppm *image, int width, int height, int denom);
+extern A2Methods_Array2 *to_float(Pnm_ppm *image, unsigned width, unsigned height, unsigned denom);
+extern void from_float(A2Methods_T methods, A2Methods_Array2 *floats, A2Methods_Array2 *rgb, unsigned width, unsigned height, unsigned denom);
 
 #endif
