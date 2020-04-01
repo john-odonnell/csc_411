@@ -53,12 +53,12 @@ void compress(FILE *input) {
 	// printf("~~trimmed~~\nheight\t%d\nwidth\t%d\ndenom\t%d\n", new_height, new_width, denom);
 
 	// initialize new 2d array
-	A2Methods_Array2 *altered;
+	A2Methods_Array2 *floats;
 
 
 	//
 	// convert to float rgb structs
-	altered = to_float(image, new_width, new_height, denom);
+	floats = to_float(methods, image, new_width, new_height, denom);
 	// free ppm and pointer
 	Pnm_ppmfree(image);
 	FREE(image);
@@ -68,7 +68,11 @@ void compress(FILE *input) {
 
 	//
 	// convert to component video
-	to_colorspace(altered, new_width, new_height);
+	A2Methods_Array2 *colorspace;
+	colorspace = to_colorspace(methods, floats, new_width, new_height);
+	// free floats array and pointer
+	methods->free(floats);
+	FREE(floats);
 	//
 	//
 
@@ -76,10 +80,10 @@ void compress(FILE *input) {
 	//
 	// compute averages
 	A2Methods_Array2 *averages;
-	averages = get_averages(altered, new_width, new_height);
+	averages = get_averages(methods, colorspace, new_width, new_height);
 	// free altered and pointer
-	methods->free(altered);
-	FREE(altered);
+	methods->free(colorspace);
+	FREE(colorspace);
 	//
 	//
 	
@@ -87,7 +91,7 @@ void compress(FILE *input) {
 	//
 	// pack averages into words
 	A2Methods_Array2 *words;
-	words = pack(averages);
+	words = pack(methods, averages);
 	// free averages and pointer
 	//
 	//

@@ -5,18 +5,15 @@
 #include "pnm.h"
 #include "float_convert.h"
 
-A2Methods_Array2 *to_float(Pnm_ppm *image, unsigned width, unsigned height, unsigned denom) {
-	// set methods
-	A2Methods_T methods = array2_methods_plain;	
-	
+A2Methods_Array2 *to_float(A2Methods_T methods, Pnm_ppm *image, unsigned width, unsigned height, unsigned denom) {
 	// instantiate new 2d array for float structs
 	A2Methods_Array2 *arr;
 	NEW(arr);
 	*arr = methods->new(width, height, sizeof(struct Pnm_rgb_float));
 	
 	// initialize rgb variables
-	int    red,  green,  blue;
-	float redf, greenf, bluef, denomf;
+	unsigned red,   green,  blue;
+	float    redf, greenf, bluef, denomf;
 	
 	// convert denominator to floating point
 	denomf = (float)denom;
@@ -43,38 +40,61 @@ A2Methods_Array2 *to_float(Pnm_ppm *image, unsigned width, unsigned height, unsi
 			
 			// find destination in new array and assign
 			destination = methods->at(*arr, i, j);
-			destination->red = redf;
+			destination->red   = redf;
 			destination->green = greenf;
-			destination->blue = bluef;
+			destination->blue  = bluef;
 		}
 	}
 
 	return arr;
 }
 
+float maintain_range_float(float n) {
+	if (n > 1) {
+		return 1.0;
+	} else if (n < 0) {
+		return 0.0;
+	} else {
+		return n;
+	}
+}
+
 void from_float(A2Methods_T methods, A2Methods_Array2 *floats, A2Methods_Array2 *rgb, unsigned width, unsigned height, unsigned denom) {
+	// intialize local variable
 	int    red,  green,  blue;
 	float redf, greenf, bluef;
-
+	
+	// intialize pointers
 	Pnm_rgb_float this_pix;
 	Pnm_rgb destination;
-
+	
+	// for each pixel
 	for (int i = 0; i < (int)width; i++) {
 		for (int j = 0; j < (int)height; j++) {
+			// pull float struct location
 			this_pix = methods->at(*floats, i, j);
-
+			
+			// pull float data members
 			redf   = this_pix->red;
 			greenf = this_pix->green;
 			bluef  = this_pix->blue;
+			
+			// maintain range of floats
+			redf   = maintain_range_float(redf);
+			greenf = maintain_range_float(greenf);
+			bluef  = maintain_range_float(bluef);
+			
+			// multiply float rgb by denominator
+			red   = (unsigned)(redf   * (float)denom);
+			green = (unsigned)(greenf * (float)denom);
+			blue  = (unsigned)(bluef  * (float)denom);
 
-			red   = (int)(redf   * (float)denom);
-			green = (int)(greenf * (float)denom);
-			blue  = (int)(bluef  * (float)denom);
-
-/*			printf("%d,%d\n", i, j);
-			printf("\tflt: %f %f %f\n", redf, greenf, bluef);
-			printf("\tRGB: %d %d %d\n", red, green, blue);
-*/
+			// printf("%d,%d\n", i, j);
+			// printf("\tflt: %f %f %f\n", redf, greenf, bluef);
+			// printf("\tRGB: %d %d %d\n", red, green, blue);
+			
+			// pull destination location and
+			// assign data members
 			destination = methods->at(*rgb, i, j);
 			destination->red   = red;
 			destination->green = green;
