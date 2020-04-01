@@ -16,17 +16,11 @@ void output(A2Methods_Array2 *arr, unsigned width, unsigned height) {
 	printf("\n");
 	for (int j = 0; j < comp_height; j++) {
 		for (int i = 0; i < comp_width; i++) {
-			// printf("%d,%d\n", i, j);
-			
 			uint64_t codeword = *(uint64_t *)methods->at(*arr, i, j);
 			for (int k = 3; k >= 0; k--) {
-				// printf("%d  ", k);
 				char byte = (char)Bitpack_getu(codeword, 8, (k * 8));
 				putchar(byte);
-				// printf("\t");
 			}
-
-			// printf("\n");
 		}
 	}
 	printf("\n");

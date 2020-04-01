@@ -90,16 +90,7 @@ A2Methods_Array2 *from_colorspace(A2Methods_T methods, A2Methods_Array2 *colorsp
 			destination->red   = red;
 			destination->green = green;
 			destination->blue  = blue;
-
-
-/*			printf("%d,%d\n", i, j);
-			printf("\tY :%f\n",   Y);
-			printf("\tPb:%f\n",  Pb);
-			printf("\tPr:%f\n",  Pr);
-			printf("\t r:%f\n", red);
-			printf("\t g:%f\n", green);
-			printf("\t b:%f\n", blue);
-*/		}
+		}
 	}
 
 	// return pointer

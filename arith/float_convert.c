@@ -89,10 +89,6 @@ void from_float(A2Methods_T methods, A2Methods_Array2 *floats, A2Methods_Array2 
 			green = (unsigned)(greenf * (float)denom);
 			blue  = (unsigned)(bluef  * (float)denom);
 
-			// printf("%d,%d\n", i, j);
-			// printf("\tflt: %f %f %f\n", redf, greenf, bluef);
-			// printf("\tRGB: %d %d %d\n", red, green, blue);
-			
 			// pull destination location and
 			// assign data members
 			destination = methods->at(*rgb, i, j);
