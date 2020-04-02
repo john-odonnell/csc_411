@@ -4,7 +4,8 @@
 #include "assert.h"
 #include "compress.h"
 
-static void (*compress_or_decompress)(FILE *input) = compress;
+// static void (*compress_or_decompress)(FILE *input) = compress;
+static void (*compress_or_decompress)(FILE *input);
 
 int main(int argc, char *argv[]) {
   int i;
