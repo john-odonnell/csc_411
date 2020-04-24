@@ -6,25 +6,46 @@
 #include "assert.h"
 #include "seq.h"
 
+#include "bitpack.h"
 #include "execute.h"
 #include "run_um.h"
 
 void load_zero(FILE *stream, Segs memory) {	
 	// initialize zero segment
 	Seq_T zero_seg = Seq_new(25);
+
+	int count = 0;
 	
+	bool flag = true;
+
 	// until the loop reaches the EOF
-	while(true){
+	while(flag){
 		// initialize current word to 0
+		int placehold;
 		uint32_t word = 0;
 		// scan for unsigned integer or break loop
-		int u = fscanf(stream, "%u", &word);
-		if (u == 0) {
-			break;
+		
+		for (int i = 0; i < 4; i++) {
+			placehold = getc(stream);
+			if (placehold == EOF) {
+				flag = false;
+			} else {
+				if (i == 0) {
+					word = Bitpack_newu(word, 8, 24, (uint32_t)placehold);
+				} else if (i == 1) {
+					word = Bitpack_newu(word, 8, 16, (uint32_t)placehold);
+				} else if (i == 2) {
+					word = Bitpack_newu(word, 8,  8, (uint32_t)placehold);
+				} else {
+					word = Bitpack_newu(word, 8,  0, (uint32_t)placehold);
+				}
+			}
 		}
 		
 		// add the word to the zero sequence
 		Seq_addhi(zero_seg, (void*)(uintptr_t)word);
+
+		count++;
 	}
 	
 	// for the number of words in the zero segment
@@ -96,7 +117,7 @@ void run(FILE *stream) {
 		// pull word from the zero seg and break into components
 		uint32_t word = seg_get(memory, 0, pro_counter);
 		Op_Instruction this_instr = get_opcode(word);
-		
+
 		// pass the instruction to a function depending on opcode
 		int opcode = (int)(this_instr->opcode);
 		switch (opcode) {
@@ -137,7 +158,7 @@ void run(FILE *stream) {
 				input(this_instr, stdin, registers);
 				break;
 			case 12:
-				load_program(this_instr, memory, registers);
+				load_program(this_instr, memory, registers, &pro_counter);
 				break;
 			case 13:
 				load_value(this_instr, registers);
@@ -148,12 +169,12 @@ void run(FILE *stream) {
 		
 		// if the program received the halt instruction,
 		// break the execution loop
-		if (opcode == 7) {
-			break;
-		}
+		if (opcode == 7) { break; }
 		
+		FREE(this_instr);
+
 		// increment program counter
-		pro_counter++;
+		if (opcode != 12) { pro_counter++; }
 	}
 
 	return;

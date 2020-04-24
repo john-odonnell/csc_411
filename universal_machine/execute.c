@@ -14,8 +14,7 @@
 // if the value in reg c is not 0
 // load the value in reg b into reg a
 void cond_move(OP instr, uint32_t *reg) {
-	uint32_t c = instr->c;
-	if (c != 0) {
+	if ((int)reg[instr->c] != 0) {
 		reg[instr->a] = reg[instr->b];
 	}
 	return;
@@ -36,14 +35,14 @@ void seg_store(OP instr, Segs memory, uint32_t *reg) {
 // add the value in reg b and the value in reg c
 // store value in reg a
 void add(OP instr, uint32_t *reg) {
-	reg[instr->a] = (reg[instr->b] + reg[instr->c]) % (2^32);
+	reg[instr->a] = (reg[instr->b] + reg[instr->c]) % (4294967296);
 	return;
 }
 
 // multiply the value in reg b with the value in reg c
 // store value in reg a
 void mult(OP instr, uint32_t *reg) {
-	reg[instr->a] = (reg[instr->b] * reg[instr->c]) % (2^32);
+	reg[instr->a] = (reg[instr->b] * reg[instr->c]) % (4294967296);
 	return;
 }
 
@@ -64,10 +63,10 @@ void nand(OP instr, uint32_t *reg) {
 // halt operation of the um
 // free memory occupied by memory and registers
 void halt(OP instr, Segs memory, uint32_t *reg) {
-	(void)instr;
+	(void)instr; (void)reg;
 	seg_free(memory);
 	FREE(memory);
-	FREE(reg);
+	FREE(instr);
 	return;
 }
 
@@ -86,29 +85,27 @@ void unmap_seg(OP instr, Segs memory, uint32_t *reg) {
 
 // output the value in reg c to a file stream
 void output(OP instr, FILE *stream, uint32_t *reg) {
-	fprintf(stream, "%u", reg[instr->c]);
+	fprintf(stream, "%c", (char)reg[instr->c]);
 	return;
 }
 
 // input the value given as input into reg c
 void input(OP instr, FILE *stream, uint32_t *reg) {
-	uint32_t word = 0;
-	int u = fscanf(stream, "%u", &word);
-	if (u == 0) {
-		reg[instr->c] = ~0;
-	} else {
-		reg[instr->c] = word;
-	}
-	
+	reg[instr->c] = (uint32_t)fgetc(stream);
 	return;
 }
 
 // loads a segment of id equal to the value in reg b into the zero seg
-void load_program(OP instr, Segs memory, uint32_t *reg) {
+void load_program(OP instr, Segs memory, uint32_t *reg, uint32_t *pro_counter) {
+	int b = (int)reg[instr->b];
+	
+	if(b == 0){
+		*pro_counter = reg[instr->c];
+		return;
+	}
+
 	// unmap zero seg
 	seg_unmap(memory, 0);
-	
-	int b = (int)reg[instr->b];
 	
 	// pull desired segment from memory
 	Seq_T this_seg = Seq_get(memory->segments, b);
@@ -121,6 +118,8 @@ void load_program(OP instr, Segs memory, uint32_t *reg) {
 	for (int i = 0; i < words; i++) {
 		seg_fill(memory, seg_get(memory, b, i), 0, i);
 	}
+
+	*pro_counter = reg[instr->c];
 
 	return;
 }

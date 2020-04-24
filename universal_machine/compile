@@ -36,15 +36,21 @@ done
 # link together .o files + libraries to make executable binaries
 # using one case statement per executable binary
 case $link in
-  all|segtest) gcc $FLAGS $LFLAGS -o segtest seg.o seg_test.o bitpack.o \
+  all|segtest) gcc $FLAGS $LFLAGS -o segtest seg.o seg_test.o \
 		  -llocality -lnetpbm -larith411 $LIBS 
               linked=yes ;;
 esac
 
 case $link in
-  all|execute) gcc $FLAGS $LFLAGS -o exectest execute.o seg.o exec_test.o bitpack.o \
+  all|execute) gcc $FLAGS $LFLAGS -o exectest execute.o seg.o exec_test.o \
 	  	  -llocality -lnetpbm -larith411 $LIBS
        	      linked=yes ;;
+esac
+
+case $link in
+  all|um) gcc $FLAGS $LFLAGS -o um um.o run_um.o execute.o seg.o bitpack.o \
+	  	  -llocality -lnetpbm -larith411 $LIBS
+  	      linked=yes ;;
 esac
 
 # error if asked to link something we didn't recognize
