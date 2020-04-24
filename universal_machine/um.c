@@ -1,6 +1,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
 #include "assert.h"
 #include "run_um.h"
 
@@ -14,8 +15,19 @@ int main(int argc, char *argv[]) {
 		// open file stream and run machine
 		FILE *stream = fopen(argv[1], "r");
 		assert(stream);
+
+		clock_t start, end;
+		double cpu_time;
+		
+		start = clock();
 		run(stream);
+		end = clock();
+
+		cpu_time = ((double)(end-start)) / CLOCKS_PER_SEC;
+
 		fclose(stream);
+
+		printf("cpu time: %f\n", cpu_time);
 	} else {
 		// run machine from standard input
 		run(stdin);
