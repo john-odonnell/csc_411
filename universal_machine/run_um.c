@@ -108,8 +108,6 @@ void run(FILE *stream) {
 	Segs memory = seg_new();
 	load_zero(stream, memory);
 	
-	int instruction_counter = 0;
-
 	// initialize registers and program counter
 	uint32_t registers[8]  = {0, 0, 0, 0, 0, 0, 0, 0};
 	uint32_t pro_counter = 0;
@@ -119,8 +117,6 @@ void run(FILE *stream) {
 		// pull word from the zero seg and break into components
 		uint32_t word = seg_get(memory, 0, pro_counter);
 		Op_Instruction this_instr = get_opcode(word);
-
-		instruction_counter++;
 
 		// pass the instruction to a function depending on opcode
 		int opcode = (int)(this_instr->opcode);
@@ -180,8 +176,6 @@ void run(FILE *stream) {
 		// increment program counter
 		if (opcode != 12) { pro_counter++; }
 	}
-
-	printf("instruction count: %d\n", instruction_counter);
 
 	return;
 }
