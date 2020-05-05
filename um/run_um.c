@@ -18,9 +18,10 @@ extern uint32_t seg_get  (Segs segments, uint32_t id, uint32_t offset);
 
 void load_zero(FILE *stream, Segs memory) {	
 	// initialize zero segment
-	Seq_T zero_seg = Seq_new(25);
+	Array_T zero_seg = Array_new(1000, sizeof(uint32_t));
 
 	int count = 0;
+	int length = 1000;
 	
 	bool flag = true;
 
@@ -49,22 +50,24 @@ void load_zero(FILE *stream, Segs memory) {
 		}
 		
 		// add the word to the zero sequence
-		Seq_addhi(zero_seg, (void*)(uintptr_t)word);
-
+		// printf("WORD: %d: %x\n", count, word);
+		*(uint32_t*)Array_get(zero_seg, count) = word;
 		count++;
+
+		if (count == length) {
+			Array_resize(zero_seg, length*2);
+			length = length * 2;
+		}
 	}
 	
+	Array_resize(zero_seg, count);
+
 	// for the number of words in the zero segment
 	// transfer each 32 bit word from the zero_seg sequence into memory
 	// int words = Seq_length(zero_seg);
 	// seg_map(memory, words);
 	memory->highest += 1;
 	Seq_addhi(memory->segments, (void*)zero_seg);
-/*	for (int i = 0; i < words; i++) {
-		seg_fill(memory, (uint32_t)(uintptr_t)Seq_get(zero_seg, i), 0, i);
-	}
-*/
-//	Seq_free(&zero_seg);
 
 	return;
 }
@@ -124,14 +127,14 @@ void run(FILE *stream) {
 	// until the loop is told to break...
 	while(!halted) {
 
-		register Seq_T zero_seg = Seq_get(memory->segments, 0);
+		register Array_T zero_seg = Seq_get(memory->segments, 0);
 		bool changed_zero = false;
 
 		while(!changed_zero) {
 			// pull word from the zero seg and break into components
-			uint32_t word = (uint32_t)(uintptr_t)Seq_get(zero_seg, pro_counter);
+			uint32_t word = *(uint32_t*)Array_get(zero_seg, pro_counter);
 			Op_Instruction this_instr = get_opcode(word);
-			
+
 			// instruction_counter++;
 
 			// pass the instruction to a function depending on opcode
@@ -194,17 +197,17 @@ void run(FILE *stream) {
 				case 12:
 					// load program
 					if (reg[b] != 0) {
-						seg_unmap(memory, 0);
+						// seg_unmap(memory, 0);
 
-						Seq_T this_seg = Seq_get(memory->segments, reg[b]);
-						int words = Seq_length(this_seg);
+						Array_T this_seg = Seq_get(memory->segments, reg[b]);
+						int words = Array_length(this_seg);
 
-						seg_map(memory, words);
-
-						for (int i = 0; i < words; i++) {
-							seg_fill(memory, (uint32_t)(uintptr_t)Seq_get(this_seg, i), 0, i);
-							// seg_fill(memory, seg_get(memory, reg[b], i), 0, i);
-						}
+						// seg_map(memory, words);
+						
+						Array_T zero_seg = Seq_get(memory->segments, 0);
+						zero_seg = Array_copy(this_seg, words);
+						Array_T old_zero = Seq_put(memory->segments, 0, zero_seg);
+						Array_free(&old_zero);
 
 						changed_zero = true;
 					}

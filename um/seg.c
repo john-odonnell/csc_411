@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include "seq.h"
+#include "array.h"
 #include "mem.h"
 #include "assert.h"
 
@@ -30,9 +31,9 @@ void seg_free(Segs segs) {
 	// free memory for each segment sequence
 	int len = Seq_length(segs->segments);
 	for (int i = 0; i < len; i++) {
-		Seq_T this_seg = Seq_remlo(segs->segments);
+		Array_T this_seg = Seq_remlo(segs->segments);
 		if (this_seg != NULL) {
-			Seq_free(&this_seg);
+			Array_free(&this_seg);
 		}
 	}
 
